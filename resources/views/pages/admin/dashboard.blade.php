@@ -1,0 +1,288 @@
+@extends('layouts.app')
+
+@section('title', 'Dashboard')
+
+@push('style')
+    <!-- CSS Libraries -->
+@endpush
+
+@section('main')
+    <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
+        <div>
+            <h3 class="fw-bold mb-3">Dashboard</h3>
+            <h6 class="op-7 mb-2">Rincian Data dan Transaksi Bank Sampah Sari Asri</h6>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 col-md-3">
+    <a href="{{ route('admin.nasabah.index') }}" class="text-decoration-none text-dark">
+        <div class="card card-stats card-round">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-icon">
+                        <div class="icon-big text-center icon-primary bubble-shadow-small">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="col col-stats ms-3 ms-sm-0">
+                        <div class="numbers">
+                            <p class="card-category">Total Nasabah</p>
+                            <h4 class="card-title">{{ $totalNasabah }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </a>
+</div>
+
+        <div class="col-sm-6 col-md-3">
+            <a href="{{ route('admin.petugas.index') }}" class="text-decoration-none text-dark">
+            <div class="card card-stats card-round">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-icon">
+                            <div class="icon-big text-center icon-info bubble-shadow-small">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                        </div>
+                        <div class="col col-stats ms-3 ms-sm-0">
+                            <div class="numbers">
+                                <p class="card-category">Total Petugas</p>
+                                <h4 class="card-title">{{ $totalPetugas }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </a>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <a href="{{ route('admin.transaksi.index') }}" class="text-decoration-none text-dark">
+            <div class="card card-stats card-round">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-icon">
+                            <div class="icon-big text-center icon-warning bubble-shadow-small">
+                                <i class="fas fa-recycle"></i>
+                            </div>
+                        </div>
+                        <div class="col col-stats ms-3 ms-sm-0">
+                            <div class="numbers">
+                                <p class="card-category">Total Sampah</p>
+                                <h4 class="card-title">{{ $totalSampahTerkumpul }} Kg</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </a>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <a href="{{ route('admin.transaksi.index') }}" class="text-decoration-none text-dark">
+            <div class="card card-stats card-round">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-icon">
+                            <div class="icon-big text-center icon-success bubble-shadow-small">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                            </div>
+                        </div>
+                        <div class="col col-stats ms-3 ms-sm-0">
+                            <div class="numbers">
+                                <p class="card-category">Total Transaksi Setoran</p>
+                                <h4 class="card-title">{{ $totalTransaksiSetoran }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</a>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6 col-md-3">
+            <a href="{{ route('admin.pengiriman.index') }}" class="text-decoration-none text-dark">
+            <div class="card card-stats card-round">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-icon">
+                                <div class="icon-big text-center icon-primary bubble-shadow-small">
+                                <i class="fas fa-truck"></i>
+                            </div>
+                        </div>
+                        <div class="col col-stats ms-3 ms-sm-0">
+                            <div class="numbers">
+                                <p class="card-category">Total Sampah Terkirim</p>
+<h4 class="card-title">{{ $totalSampahTerkirim }} Kg</h4>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </a>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <a href="/admin/nasabah/index.blade.php" class="text-decoration-none text-dark">
+            <div class="card card-stats card-round">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-icon">
+                            <div class="icon-big text-center icon-secondary bubble-shadow-small">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                        </div>
+                        <div class="col col-stats ms-3 ms-sm-0">
+                            <div class="numbers">
+                                <p class="card-category">Permintaan Tarik Saldo</p>
+                                <h4 class="card-title">{{ $totalPermintaanPencairan }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </a>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <a href="{{ route('admin.feedback.index') }}" class="text-decoration-none text-dark">
+            <div class="card card-stats card-round">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-icon">
+                            <div class="icon-big text-center icon-dark bubble-shadow-small">
+                                <i class="fas fa-comment-dots"></i>
+                            </div>
+                        </div>
+                        <div class="col col-stats ms-3 ms-sm-0">
+                            <div class="numbers">
+                                <p class="card-category">Total Feedback Masuk</p>
+                                <h4 class="card-title">{{ $totalFeedbackMasuk }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </a>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <a href="{{ route('admin.artikel.index') }}" class="text-decoration-none text-dark">
+            <div class="card card-stats card-round">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-icon">
+                            <div class="icon-big text-center icon-light bubble-shadow-small">
+                                <i class="fas fa-newspaper"></i>
+                            </div>
+                        </div>
+                        <div class="col col-stats ms-3 ms-sm-0">
+                            <div class="numbers">
+                                <p class="card-category">Total Artikel</p>
+                                <h4 class="card-title">{{ $totalArtikel }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6 col-md-3">
+            <div class="card card-stats card-round">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-icon">
+                            <div class="icon-big text-center icon-danger bubble-shadow-small">
+                                <i class="fas fa-box"></i>
+                            </div>
+                        </div>
+                        <div class="col col-stats ms-3 ms-sm-0">
+                            <div class="numbers">
+                                <p class="card-category">Total Stok Sampah</p>
+                                <h4 class="card-title">{{ $totalStokSampah }} Kg</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <a href="{{ route('admin.transaksi.index') }}" class="text-decoration-none text-dark">
+            <div class="card card-stats card-round">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-icon">
+                            <div class="icon-big text-center icon-info bubble-shadow-small">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                        </div>
+                        <div class="col col-stats ms-3 ms-sm-0">
+                            <div class="numbers">
+                                <p class="card-category">Total Saldo Nasabah</p>
+<h4 class="card-title">Rp {{ number_format($totalSaldoNasabah, 0, ',', '.') }}</h4>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </a>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            
+            <div class="card card-stats card-round">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-icon">
+                            <div class="icon-big text-center bubble-shadow-small" style="color: #e383c3ff;">
+    <i class="fas fa-hand-holding-usd"></i>
+</div>
+
+                        </div>
+                        <div class="col col-stats ms-3 ms-sm-0">
+                            <div class="numbers">
+                                <p class="card-category">Keuntungan Bank Sampah 25%</p>
+                                <h4 class="card-title">Rp {{ number_format($totalKeuntungan, 0, ',', '.') }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+    <div class="card card-stats card-round">
+        <div class="card-body py-2 px-3"> 
+            <div class="row align-items-center">
+                <div class="col-icon">
+                    <div class="icon-big text-center bubble-shadow-small" style="color: #b4c86cff; font-size: 1.8rem;"> {{-- kecilkan icon --}}
+                        <i class="fas fa-coins"></i>
+                    </div>
+                </div>
+                <div class="col col-stats ms-2">
+                    <div class="numbers">
+                        <p class="card-category mb-0" style="font-size: 1rem;">Saldo Bersih Nasabah</p>
+                        <h4 class="card-title mt-1" style="font-size: 1.5rem;">Rp {{ number_format($totalSaldoBersih, 0, ',', '.') }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    </div>
+@endsection
+<style>
+    a.text-decoration-none.text-dark:hover {
+        text-decoration: none;
+        color: inherit;
+    }
+</style>
+
+@push('scripts')
+   
+
+@endpush
+
