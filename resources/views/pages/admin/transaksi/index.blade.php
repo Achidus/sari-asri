@@ -67,18 +67,29 @@
                                     <th>Nama Nasabah</th>
                                     <th>Berat (kg)</th>
                                     <th>Total (Rp)</th>
+                                    <th>Keuntungan 25%</th> {{-- Tambahan --}}
+        <th>Saldo Bersih Nasabah</th> {{-- Tambahan --}}
+
                                     <th style="width: 250px">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($transaksis as $index => $transaksi)
-                                    <tr>
-                                        <td>{{ $transaksis->firstItem() + $index }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($transaksi->tanggal_transaksi)->format('d-m-Y') }}</td>
-                                        <td>{{ $transaksi->nasabah->nama_lengkap }}</td>
-                                        <td>{{ number_format($transaksi->total_berat, 2, ',', '.') }}</td>
-                                        <td>Rp{{ number_format($transaksi->total_transaksi, 0, ',', '.') }}</td>
-                                        <td>
+                                    @php
+        $totalTransaksi = $transaksi->total_transaksi ?? $transaksi->detailTransaksi->sum('harga_total');
+        $keuntungan = $totalTransaksi * 0.25;
+        $saldoBersih = $totalTransaksi * 0.75;
+    @endphp
+    <tr>
+        <td>{{ $transaksis->firstItem() + $index }}</td>
+        <td>{{ \Carbon\Carbon::parse($transaksi->tanggal_transaksi)->format('d-m-Y') }}</td>
+        <td>{{ $transaksi->nasabah->nama_lengkap }}</td>
+        <td>{{ number_format($transaksi->total_berat, 2, ',', '.') }}</td>
+        <td>Rp{{ number_format($totalTransaksi, 0, ',', '.') }}</td>
+        <td>Rp{{ number_format($keuntungan, 0, ',', '.') }}</td> {{-- Tambahan --}}
+        <td>Rp{{ number_format($saldoBersih, 0, ',', '.') }}</td> {{-- Tambahan --}}
+        <td>
+
                                             <div class="row row-cols-2 g-1">
                                                 <div class="col">
                                                     <a href="{{ route('admin.transaksi.show', $transaksi->id) }}" class="btn btn-sm btn-info w-100">
@@ -127,6 +138,7 @@
             </div>
         </div>
     </div>
+    
 @endsection
 
 @push('scripts')

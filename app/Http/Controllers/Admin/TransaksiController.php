@@ -17,10 +17,12 @@ use RealRashid\SweetAlert\Facades\Alert;
 class TransaksiController extends Controller
 {
 
-    public function index(Request $request)
+   public function index(Request $request)
 {
+    // Query dasar transaksi
     $query = Transaksi::with(['nasabah', 'detailTransaksi.sampah']);
 
+    // Filter berdasarkan search jika ada
     if ($request->has('search') && !empty($request->search)) {
         $search = $request->search;
         $query->whereHas('nasabah', function ($q) use ($search) {
@@ -30,15 +32,29 @@ class TransaksiController extends Controller
         });
     }
 
+    // Ambil data transaksi dengan pagination
     $transaksis = $query->paginate(10)->withQueryString();
 
+    // Hitung total berat & total transaksi per transaksi
     foreach ($transaksis as $transaksi) {
         $transaksi->total_berat = $transaksi->detailTransaksi->sum('berat_kg');
         $transaksi->total_transaksi = $transaksi->detailTransaksi->sum('harga_total');
     }
 
-    return view('pages.admin.transaksi.index', compact('transaksis'));
+    // Ambil data keuntungan & saldo bersih per nasabah
+    $nasabahs = Nasabah::with(['transaksi.detailTransaksi'])->get()->map(function ($nasabah) {
+        $total = $nasabah->transaksi->flatMap->detailTransaksi->sum('harga_total');
+        return [
+            'nama' => $nasabah->nama_lengkap,
+            'keuntungan' => $total * 0.25,
+            'saldo_bersih' => $total * 0.75,
+        ];
+    });
+
+    // Kirim ke view
+    return view('pages.admin.transaksi.index', compact('transaksis', 'nasabahs'));
 }
+
 
 
     public function generateUniqueTransactionCode()

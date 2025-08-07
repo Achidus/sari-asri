@@ -273,6 +273,55 @@
             </div>
         </div>
     </section>
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h3 class="fw-bold">Daftar Harga Sampah Terbaru</h3>
+                <p class="text-muted">Berikut adalah daftar sampah yang tersedia di Bank Sampah Sari Asri.</p>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-success">
+                    <tr>
+                        <th>#</th>
+                        <th>Nama Sampah</th>
+                        <th>Harga per Kg</th>
+                        <th>Gambar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($sampahs as $index => $sampah)
+                        <tr>
+                            <td>{{ $sampahs->firstItem() + $index }}</td>
+                            <td>{{ $sampah->nama_sampah }}</td>
+                            <td>Rp{{ number_format($sampah->harga_per_kg, 2, ',', '.') }}</td>
+                            <td>
+                                @if ($sampah->gambar)
+                                    <img src="{{ asset('storage/sampah/' . $sampah->gambar) }}"
+                                        alt="{{ $sampah->nama_sampah }}"
+                                        style="width: 100px; height: auto;">
+                                @else
+                                    Tidak ada
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center">Belum ada data sampah</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-3">
+            {{ $sampahs->links() }}
+        </div>
+    </div>
+</section>
 
     <section class="bg-white">
         <div class="container px-5">

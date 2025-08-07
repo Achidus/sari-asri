@@ -26,6 +26,7 @@ use App\Http\Controllers\Petugas\TransaksiController as PetugasTransaksiControll
 use App\Http\Controllers\Petugas\NasabahController as PetugasNasabahController;
 use App\Http\Controllers\Petugas\DashboardController;
 use App\Models\PengirimanPengepul;
+use App\Models\Sampah;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,9 +38,9 @@ use App\Models\PengirimanPengepul;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
 Route::get('/', function () {
-    return view('welcome');
+    $sampahs = Sampah::latest()->paginate(10);
+    return view('welcome', compact('sampahs'));
 });
 
 Route::middleware('guest')->group(function () {
