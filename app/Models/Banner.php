@@ -12,7 +12,10 @@ class Banner extends Model
     protected $table = 'banner';
 
     protected $fillable = [
-        'nama_banner', 'file_banner'
-    ];
+    'nama_banner',
+    'file_banner',
+    'status'
+];
+
 
 }

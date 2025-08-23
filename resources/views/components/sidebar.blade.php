@@ -74,6 +74,7 @@
                         </div>
                     </li>
 
+
                     <!-- Manajemen Konten -->
                     <li class="nav-item">
                         <a data-bs-toggle="collapse" href="#manajemen-konten" class="collapsed" aria-expanded="false">
@@ -96,6 +97,28 @@
                             </ul>
                         </div>
                     </li>
+<!-- Menu Kas -->
+    <li class="nav-item">
+        <a data-bs-toggle="collapse" href="#kas" class="collapsed" aria-expanded="false">
+            <i class="fas fa-wallet"></i>
+            <p>Kas</p>
+            <span class="caret"></span>
+        </a>
+        <div class="collapse" id="kas">
+            <ul class="nav nav-collapse">
+                <li>
+                    <a href="{{ route('admin.kas.masuk') }}">
+                        <span class="sub-item">Kas Masuk</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.kas.keluar') }}">
+                        <span class="sub-item">Kas Keluar</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </li>
 
                     <!-- Transaksi -->
                     <li class="nav-item">

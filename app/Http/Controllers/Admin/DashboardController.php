@@ -16,6 +16,8 @@ use App\Models\PencairanSaldo;
 use App\Models\PengirimanPengepul;
 use App\Models\DetailPengiriman;
 use Illuminate\Support\Facades\DB;
+use App\Models\Kas;
+
 
 class DashboardController extends Controller
 {
@@ -46,6 +48,16 @@ class DashboardController extends Controller
 
 
 $totalSaldoBersih = Saldo::sum(DB::raw('saldo * 0.75'));
+// Total Kas Masuk
+$totalKasMasuk = Kas::where('jenis', 'masuk')->sum('nominal');
+
+// Total Kas Keluar
+$totalKasKeluar = Kas::where('jenis', 'keluar')->sum('nominal');
+
+// Total Keuntungan Bank Sampah
+// Jika sudah dihitung sebelumnya sebagai $totalKeuntungan, pakai itu
+// Total Saldo Bank
+$totalSaldoBank = $totalKasMasuk + $totalKeuntungan - $totalKasKeluar;
 
         // Nasabah terbaik
         $nasabahTerbaik = Nasabah::withCount(['transaksi as total_setoran' => function ($query) {
@@ -73,6 +85,7 @@ $totalSaldoBersih = Saldo::sum(DB::raw('saldo * 0.75'));
             'totalSampahTerkirim',
             'totalKeuntungan',
             'totalSaldoBersih',
+            'totalSaldoBank', 
             'nasabahTerbaik',
             'bulan',
             'transaksiPerBulan'

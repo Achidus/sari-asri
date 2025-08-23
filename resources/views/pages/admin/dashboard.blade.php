@@ -271,6 +271,27 @@
         </div>
     </div>
 </div>
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary shadow-sm">
+            <div class="card-body text-center">
+                <!-- Logo/Icon di atas judul -->
+                <div class="mb-2">
+                    <i class="fas fa-university fa-2x"></i> <!-- Contoh Font Awesome icon -->
+                </div>
+
+                <!-- Judul -->
+                <h5 class="card-title mb-2">Total Saldo Bank</h5>
+
+                <!-- Nominal -->
+                <h3 class="card-text mb-1">Rp{{ number_format($totalSaldoBank, 0, ',', '.') }}</h3>
+
+                <!-- Keterangan kecil -->
+                <small class="d-block">Kas Masuk + Keuntungan Bank - Kas Keluar</small>
+            </div>
+        </div>
+    </div>
+</div>
 
     </div>
 @endsection

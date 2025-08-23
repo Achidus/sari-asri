@@ -90,8 +90,9 @@ class SampahController extends Controller
     $sampah = Sampah::findOrFail($id);
 
     if ($sampah->gambar) {
-        Storage::delete($sampah->gambar);
-    }
+    Storage::delete('public/sampah/' . $sampah->gambar);
+}
+
 
     $sampah->delete();
 

@@ -273,6 +273,95 @@
             </div>
         </div>
     </section>
+    <section id="berita" class="py-5 bg-light">
+  <div class="container">
+    <h2 class="text-center mb-4 fw-bold">Berita Terbaru</h2>
+    <div class="row g-4">
+      @foreach ($artikels as $artikel)
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm border-0 rounded-3">
+            @if ($artikel->thumbnail)
+              <img src="{{ asset('storage/thumbnail/' . $artikel->thumbnail) }}" 
+                   class="card-img-top" 
+                   alt="{{ $artikel->judul_postingan }}"
+                   style="height: 200px; object-fit: cover;">
+            @endif
+            <div class="card-body d-flex flex-column">
+              <small class="text-uppercase text-success fw-bold">Berita</small>
+              <h5 class="card-title fw-bold mt-2">
+                {{ Str::limit($artikel->judul_postingan, 70) }}
+              </h5>
+              <p class="card-text text-muted small">
+                {{ Str::limit(strip_tags($artikel->isi ?? ''), 120) }}
+              </p>
+              <a href="{{ route('admin.artikel.show', $artikel->id) }}" 
+                 class="mt-auto text-success fw-bold">
+                Baca Selengkapnya >>>
+              </a>
+            </div>
+            <div class="card-footer bg-white border-0">
+              <small class="text-muted">{{ $artikel->created_at->format('d M Y') }}</small>
+            </div>
+          </div>
+        </div>
+      @endforeach
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-center mt-4">
+      {{ $artikels->links() }}
+    </div>
+  </div>
+</section>
+
+<section class="bg-white py-5">
+    <div class="container">
+        <h2 class="text-center mb-4 fw-bold">Daftar Nasabah</h2>
+        <p class="text-muted text-center">Berikut adalah beberapa nasabah Bank Sampah Sari Asri.</p>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-success">
+                    <tr>
+                        <th>#</th>
+                        <th>Nama</th>
+                        <th>No. Registrasi</th>
+                        <th>No. HP</th>
+                        <th>Saldo</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($nasabahs as $index => $nasabah)
+                        <tr>
+                            <td>{{ $nasabahs->firstItem() + $index }}</td>
+                            <td>{{ $nasabah->nama_lengkap }}</td>
+                            <td>{{ $nasabah->no_registrasi }}</td>
+                            <td>{{ $nasabah->no_hp }}</td>
+                            <td>Rp{{ number_format($nasabah->saldo->saldo, 0, ',', '.') }}</td>
+                            <td>
+                                @if ($nasabah->status === 'aktif')
+                                    <span class="badge bg-success text-white">Aktif</span>
+                                @else
+                                    <span class="badge bg-danger text-white">Tidak Aktif</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center">Belum ada nasabah.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex justify-content-center mt-3">
+            {{ $nasabahs->links() }}
+        </div>
+    </div>
+</section>
+
 <section class="bg-light py-5">
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-3">
