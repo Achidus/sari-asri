@@ -26,6 +26,7 @@ use App\Http\Controllers\ArtikelController;
 use App\Http\Controllers\Petugas\DashboardController as PetugasDashboardController;
 use App\Http\Controllers\Petugas\TransaksiController as PetugasTransaksiController;
 use App\Http\Controllers\Petugas\NasabahController as PetugasNasabahController;
+
 use Illuminate\Http\Request;
 use App\Models\Sampah;
 use App\Models\Nasabah;
@@ -56,7 +57,10 @@ Route::get('/', function (Request $request) {
     return view('welcome', compact('sampahs','nasabahs','artikels'));
 })->name('welcome');
 
-// Detail artikel publik
+// Halaman daftar artikel publik
+Route::get('/berita', [ArtikelController::class, 'index'])->name('artikel.index');
+
+// Halaman detail artikel publik (per slug)
 Route::get('/artikel/{slug}', [ArtikelController::class, 'show'])->name('artikel.show');
 
 // Auth
@@ -86,7 +90,6 @@ Route::middleware(['auth', 'checkRole:admin'])->prefix('admin')->group(function 
     Route::put('/transaksi/{id}', [AdminTransaksiController::class, 'update'])->name('admin.transaksi.update');
 
     // Kas
-    // Rute dinamis berdasarkan jenis
     Route::prefix('kas')->name('admin.kas.')->group(function () {
         Route::get('/{jenis}', [AdminKasController::class, 'index'])->name('index');
         Route::get('/{jenis}/create', [AdminKasController::class, 'create'])->name('create');

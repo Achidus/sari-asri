@@ -284,7 +284,8 @@
                 <h5 class="card-title mb-2">Total Saldo Bank</h5>
 
                 <!-- Nominal -->
-                <h3 class="card-text mb-1">Rp{{ number_format($totalSaldoBank, 0, ',', '.') }}</h3>
+                <h4 class="card-title">Rp {{ number_format($totalSaldoBank, 0, ',', '.') }}</h4>
+
 
                 <!-- Keterangan kecil -->
                 <small class="d-block">Kas Masuk + Keuntungan Bank - Kas Keluar</small>
@@ -294,6 +295,57 @@
 </div>
 
     </div>
+
+    <div class="row mb-4">
+    <!-- Transaksi per Bulan -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Transaksi per Bulan</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="transaksiChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kas Masuk vs Kas Keluar per Bulan -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Kas Masuk per Bulan</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="kasChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Saldo Bersih Bank per Bulan -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Saldo Bersih Bank per Bulan</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="saldoChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sampah Masuk vs Terkirim -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Sampah Masuk vs Terkirim</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="sampahChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 <style>
     a.text-decoration-none.text-dark:hover {
@@ -303,7 +355,96 @@
 </style>
 
 @push('scripts')
-   
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Transaksi per Bulan
+    new Chart(document.getElementById('transaksiChart'), {
+        type: 'line',
+        data: {
+            labels: {!! json_encode($bulan) !!},
+            datasets: [{
+                label: 'Jumlah Transaksi',
+                data: {!! json_encode($transaksiPerBulan) !!},
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: { responsive: true }
+    });
 
+    // Kas Masuk vs Keluar per Bulan
+    new Chart(document.getElementById('kasChart'), {
+        type: 'line',
+        data: {
+            labels: {!! json_encode($bulan) !!},
+            datasets: [
+                {
+                    label: 'Kas Masuk',
+                    data: {!! json_encode($kasMasukPerBulan ?? [0,0,0,0,0,0,0,0,0,0,0,0]) !!},
+                    backgroundColor: 'rgba(0,255,0,0.2)',
+                    borderColor: 'green',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3
+                },
+                {
+                    label: 'Kas Keluar',
+                    data: {!! json_encode($kasKeluarPerBulan ?? [0,0,0,0,0,0,0,0,0,0,0,0]) !!},
+                    backgroundColor: 'rgba(255,0,0,0.2)',
+                    borderColor: 'red',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3
+                }
+            ]
+        },
+        options: { responsive: true }
+    });
+
+    // Saldo Bersih Bank per Bulan
+    new Chart(document.getElementById('saldoChart'), {
+        type: 'line',
+        data: {
+            labels: {!! json_encode($bulan) !!},
+            datasets: [{
+                label: 'Saldo Bersih Bank (Rp)',
+                data: {!! json_encode($saldoBersihPerBulan ?? [0,0,0,0,0,0,0,0,0,0,0,0]) !!},
+                backgroundColor: 'rgba(255,165,0,0.2)',
+                borderColor: 'orange',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: { responsive: true }
+    });
+
+    // Sampah Masuk vs Terkirim
+    new Chart(document.getElementById('sampahChart'), {
+        type: 'bar',
+        data: {
+            labels: {!! json_encode($bulan) !!},
+            datasets: [
+                {
+                    label: 'Sampah Masuk (Kg)',
+                    data: {!! json_encode($sampahMasukPerBulan ?? [0,0,0,0,0,0,0,0,0,0,0,0]) !!},
+                    backgroundColor: 'rgba(128,0,255,0.5)',
+                },
+                {
+                    label: 'Sampah Terkirim (Kg)',
+                    data: {!! json_encode($sampahTerkirimPerBulan ?? [0,0,0,0,0,0,0,0,0,0,0,0]) !!},
+                    backgroundColor: 'rgba(255,192,203,0.5)',
+                }
+            ]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+    });
+});
+</script>
 @endpush
+
 

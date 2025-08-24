@@ -95,6 +95,15 @@
     <!-- Kaiadmin JS -->
     <script src="{{ asset('assets/js/kaiadmin.trendy.min.js') }}"></script>
 
+    <!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Kai Admin JS -->
+<script src="{{ asset('assets/js/core.js') }}"></script>
+<script src="{{ asset('assets/js/setting-demo.js') }}"></script>
+<script src="{{ asset('assets/js/sidebar.js') }}"></script>
+
+
     @stack('scripts')
 
 </body>

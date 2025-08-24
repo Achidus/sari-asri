@@ -18,11 +18,11 @@ use App\Models\DetailPengiriman;
 use Illuminate\Support\Facades\DB;
 use App\Models\Kas;
 
-
 class DashboardController extends Controller
 {
     public function index()
     {
+        // Statistik utama
         $totalNasabah = Nasabah::count();
         $totalPetugas = Petugas::count();
         $totalSampahTerkumpul = DetailTransaksi::sum('berat_kg');
@@ -36,40 +36,72 @@ class DashboardController extends Controller
         $totalStokSampah = Sampah::with(['detailTransaksi', 'detailPengiriman'])
             ->get()
             ->sum(function ($sampah) {
-                $totalMasuk = $sampah->detailTransaksi->sum('berat_kg');
-                $totalKeluar = $sampah->detailPengiriman->sum('berat_kg');
-                return $totalMasuk - $totalKeluar;
+                return $sampah->detailTransaksi->sum('berat_kg') - $sampah->detailPengiriman->sum('berat_kg');
             });
 
         $totalSampahTerkirim = DetailPengiriman::sum('berat_kg');
 
-        // Keuntungan dari pengiriman
+        // Keuntungan dari saldo
         $totalKeuntungan = Saldo::select(DB::raw('SUM(saldo * 0.25) as keuntungan'))->value('keuntungan');
+        $totalSaldoBersih = Saldo::sum(DB::raw('saldo * 0.75'));
 
+        // Total Kas Masuk & Keluar
+        $totalKasMasuk = Kas::where('jenis', 'masuk')->sum('nominal');
+        $totalKasKeluar = Kas::where('jenis', 'keluar')->sum('nominal');
 
-$totalSaldoBersih = Saldo::sum(DB::raw('saldo * 0.75'));
-// Total Kas Masuk
-$totalKasMasuk = Kas::where('jenis', 'masuk')->sum('nominal');
-
-// Total Kas Keluar
-$totalKasKeluar = Kas::where('jenis', 'keluar')->sum('nominal');
-
-// Total Keuntungan Bank Sampah
-// Jika sudah dihitung sebelumnya sebagai $totalKeuntungan, pakai itu
-// Total Saldo Bank
-$totalSaldoBank = $totalKasMasuk + $totalKeuntungan - $totalKasKeluar;
+        // Total Saldo Bank
+        $totalSaldoBank = $totalKasMasuk + $totalKeuntungan - $totalKasKeluar;
 
         // Nasabah terbaik
         $nasabahTerbaik = Nasabah::withCount(['transaksi as total_setoran' => function ($query) {
             $query->where('tanggal_transaksi', '>=', now()->subMonth());
         }])->orderBy('total_setoran', 'desc')->take(10)->get();
 
-        // Data untuk chart
+        // Data chart
         $bulan = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
         $transaksiPerBulan = [];
+        $kasMasukPerBulan = [];
+        $kasKeluarPerBulan = [];
+        $sampahMasukPerBulan = [];
+        $sampahTerkirimPerBulan = [];
+        $saldoBersihPerBulan = [];
+        $tahunIni = date('Y');
 
         foreach (range(1, 12) as $month) {
-            $transaksiPerBulan[] = Transaksi::whereMonth('created_at', $month)->count();
+            // Jumlah transaksi
+            $transaksiPerBulan[] = Transaksi::whereMonth('created_at', $month)
+                ->whereYear('created_at', $tahunIni)
+                ->count();
+
+            // Kas masuk & keluar per bulan
+            $kasMasukBulan = Kas::where('jenis','masuk')
+                ->whereMonth('created_at',$month)
+                ->whereYear('created_at', $tahunIni)
+                ->sum('nominal');
+
+            $kasKeluarBulan = Kas::where('jenis','keluar')
+                ->whereMonth('created_at',$month)
+                ->whereYear('created_at', $tahunIni)
+                ->sum('nominal');
+
+            $kasMasukPerBulan[] = $kasMasukBulan;
+            $kasKeluarPerBulan[] = $kasKeluarBulan;
+
+            // Sampah masuk & terkirim
+            $sampahMasukPerBulan[] = DetailTransaksi::whereMonth('created_at',$month)
+                ->whereYear('created_at', $tahunIni)
+                ->sum('berat_kg');
+
+            $sampahTerkirimPerBulan[] = DetailPengiriman::whereMonth('created_at',$month)
+                ->whereYear('created_at', $tahunIni)
+                ->sum('berat_kg');
+
+            // Saldo bersih per bulan (non-kumulatif)
+            $keuntunganBulan = Saldo::whereMonth('created_at',$month)
+                ->whereYear('created_at', $tahunIni)
+                ->sum(DB::raw('saldo * 0.25'));
+
+            $saldoBersihPerBulan[] = $kasMasukBulan + $keuntunganBulan - $kasKeluarBulan;
         }
 
         return view('pages.admin.dashboard', compact(
@@ -85,12 +117,15 @@ $totalSaldoBank = $totalKasMasuk + $totalKeuntungan - $totalKasKeluar;
             'totalSampahTerkirim',
             'totalKeuntungan',
             'totalSaldoBersih',
-            'totalSaldoBank', 
+            'totalSaldoBank',
             'nasabahTerbaik',
             'bulan',
-            'transaksiPerBulan'
-            
-        
+            'transaksiPerBulan',
+            'kasMasukPerBulan',
+            'kasKeluarPerBulan',
+            'sampahMasukPerBulan',
+            'sampahTerkirimPerBulan',
+            'saldoBersihPerBulan'
         ));
     }
 }

@@ -8,7 +8,7 @@
         <p class="text-muted">Anda dapat mengelola semua data kas, seperti menambah, mengedit, dan menghapus.</p>
     </div>
     <div>
-        <a href="{{ route('admin.kas.create', $jenis) }}" class="btn btn-primary">Tambah Kas</a>
+        <a href="{{ route('admin.kas.create', $jenis) }}" class="btn btn-primary">Tambah Pengeluaran</a>
     </div>
 </div>
 <div class="row mb-4">
@@ -33,7 +33,7 @@
                 <tr>
                     <th>#</th>
                     <th>Tanggal</th> <!-- Tambahan kolom Tanggal -->
-                    <th>Sumber Dana</th>
+                    <th>Tujuan</th>
                     <th>Keterangan</th>
                     <th>Nominal</th>
                     <th>Aksi</th>

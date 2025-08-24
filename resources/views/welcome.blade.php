@@ -21,26 +21,46 @@
 </head>
 
 <body id="page-top">
-    <nav class="navbar navbar-expand-lg bg-success navbar-dark fixed-top shadow-sm" id="mainNav">
-        <div class="container px-5">
-            <a class="navbar-brand fw-bold" href="#page-top">BANK SAMPAH SARI ASRI </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive"
-                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                Menu
-                <i class="bi-list"></i>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav text-white ms-auto me-4 my-3 my-lg-0">
-                    <li class="nav-item"><a class="nav-link me-lg-3" href="/">Beranda</a></li>
-                    <li class="nav-item"><a class="nav-link me-lg-3" href="#tentangKami">Tentang Kami</a></li>
-                    <li class="nav-item"><a class="nav-link me-lg-3" href="#lokasiKami">Lokasi Kami</a></li>
-                    <li class="nav-item"><a class="nav-link me-lg-3" href="{{ route('login') }}">Masuk Petugas</a></li>
-                </ul>
-            </div>
+    <!-- Navbar transparan dengan logo hijau bulat -->
+<nav class="navbar navbar-expand-lg fixed-top shadow-sm" 
+     style="background: rgba(255,255,255,0.8); border-radius: 15px; padding: 10px 20px;">
+    <div class="container px-5">
+        <a class="navbar-brand fw-bold d-flex align-items-center" href="#page-top" 
+           style="color: #28a745; font-weight: 700;">
+            <img src="{{ asset('assets/web/img/logo_bank.png') }}" 
+                 alt="Logo Bank Sampah Hijau" 
+                 style="width: 40px; height: 40px; margin-right: 10px; border-radius: 50%; object-fit: cover;">
+            BANK SAMPAH SARI ASRI
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive"
+            aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            Menu <i class="bi-list" style="color:#28a745;"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto me-4 my-3 my-lg-0">
+                <li class="nav-item"><a class="nav-link me-lg-3" href="#kkn" style="color:#28a745; font-weight: 700;">Beranda</a></li>
+                <li class="nav-item"><a class="nav-link me-lg-3" href="#tentangKami" style="color:#28a745; font-weight: 700;">Tentang Kami</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle me-lg-3" href="#" id="beritaDropdown"
+                       role="button" data-bs-toggle="dropdown" aria-expanded="false" 
+                       style="color:#28a745; font-weight: 700;">
+                        Berita
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="beritaDropdown">
+                        <li><a class="dropdown-item" href="#nasabah" style="font-weight: 600;">Daftar Nasabah</a></li>
+                        <li><a class="dropdown-item" href="#berita" style="font-weight: 600;">Berita Terbaru</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a class="nav-link me-lg-3" href="#lokasiKami" style="color:#28a745; font-weight: 700;">Lokasi Kami</a></li>
+                <li class="nav-item"><a class="nav-link me-lg-3" href="{{ route('login') }}" style="color:#28a745; font-weight: 700;">Masuk Petugas</a></li>
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
+
+
     <section>
-    <header class="kkn">
+    <header class="kkn" id="kkn">
     <div class="container px-4 px-lg-5 h-100">
         <div class="row gx-4 gx-lg-5 h-100 align-items-center justify-content-center text-center">
             <div class="col-lg-8 align-self-end">
@@ -294,10 +314,10 @@
               <p class="card-text text-muted small">
                 {{ Str::limit(strip_tags($artikel->isi ?? ''), 120) }}
               </p>
-              <a href="{{ route('admin.artikel.show', $artikel->id) }}" 
-                 class="mt-auto text-success fw-bold">
-                Baca Selengkapnya >>>
-              </a>
+              <a href="{{ route('artikel.show', $artikel->slug) }}" class="mt-auto text-success fw-bold">
+    Baca Selengkapnya >>>
+</a>
+
             </div>
             <div class="card-footer bg-white border-0">
               <small class="text-muted">{{ $artikel->created_at->format('d M Y') }}</small>
@@ -314,45 +334,68 @@
   </div>
 </section>
 
-<section class="bg-white py-5">
+<section class="bg-white py-5" id="nasabah">
     <div class="container">
         <h2 class="text-center mb-4 fw-bold">Daftar Nasabah</h2>
         <p class="text-muted text-center">Berikut adalah beberapa nasabah Bank Sampah Sari Asri.</p>
 
         <div class="table-responsive">
-            <table class="table table-bordered table-hover align-middle">
-                <thead class="table-success">
-                    <tr>
-                        <th>#</th>
-                        <th>Nama</th>
-                        <th>No. Registrasi</th>
-                        <th>No. HP</th>
-                        <th>Saldo</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($nasabahs as $index => $nasabah)
-                        <tr>
-                            <td>{{ $nasabahs->firstItem() + $index }}</td>
-                            <td>{{ $nasabah->nama_lengkap }}</td>
-                            <td>{{ $nasabah->no_registrasi }}</td>
-                            <td>{{ $nasabah->no_hp }}</td>
-                            <td>Rp{{ number_format($nasabah->saldo->saldo, 0, ',', '.') }}</td>
-                            <td>
-                                @if ($nasabah->status === 'aktif')
-                                    <span class="badge bg-success text-white">Aktif</span>
-                                @else
-                                    <span class="badge bg-danger text-white">Tidak Aktif</span>
-                                @endif
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="text-center">Belum ada nasabah.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
+    <table class="table table-bordered table-hover align-middle">
+        <thead class="table-success">
+            <tr>
+                <th>#</th>
+                <th>Nama</th>
+                <th>No. Registrasi</th>
+                <th>No. HP</th>
+                <th>Saldo</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+@forelse ($nasabahs as $index => $nasabah)
+    <tr style="cursor:pointer;" 
+        data-bs-toggle="offcanvas" 
+        data-bs-target="#offcanvas{{ $nasabah->id }}" 
+        aria-controls="offcanvas{{ $nasabah->id }}">
+        <td>{{ $nasabahs->firstItem() + $index }}</td>
+        <td>{{ $nasabah->nama_lengkap }}</td>
+        <td>{{ $nasabah->no_registrasi }}</td>
+        <td>{{ $nasabah->no_hp }}</td>
+        <td>Rp{{ number_format($nasabah->saldo->saldo, 0, ',', '.') }}</td>
+        <td>
+            @if ($nasabah->status === 'aktif')
+                <span class="badge bg-success text-white">Aktif</span>
+            @else
+                <span class="badge bg-danger text-white">Tidak Aktif</span>
+            @endif
+        </td>
+    </tr>
+
+    <!-- Offcanvas detail -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas{{ $nasabah->id }}" aria-labelledby="offcanvasLabel{{ $nasabah->id }}">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasLabel{{ $nasabah->id }}">{{ $nasabah->nama_lengkap }}</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <p><strong>No. Registrasi:</strong> {{ $nasabah->no_registrasi }}</p>
+            <p><strong>No. HP:</strong> {{ $nasabah->no_hp }}</p>
+            <p><strong>Saldo:</strong> Rp{{ number_format($nasabah->saldo->saldo, 0, ',', '.') }}</p>
+            <p><strong>Status:</strong> {{ $nasabah->status }}</p>
+            <!-- Tambahkan info lain jika perlu -->
+        </div>
+    </div>
+@empty
+    <tr>
+        <td colspan="6" class="text-center">Belum ada nasabah.</td>
+    </tr>
+@endforelse
+        </tbody>
+    </table>
+</div>
+
+</tbody>
+
             </table>
         </div>
 
@@ -362,11 +405,11 @@
     </div>
 </section>
 
-<section class="bg-light py-5">
+<section class="bg-light py-5" id="sampah">
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
-                <h3 class="fw-bold">Daftar Harga Sampah Terbaru</h3>
+                <h3 class="fw-bold">Daftar Harga Sampah</h3>
                 <p class="text-muted">Berikut adalah daftar sampah yang tersedia di Bank Sampah Sari Asri.</p>
             </div>
         </div>

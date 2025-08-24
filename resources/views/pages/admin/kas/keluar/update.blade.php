@@ -25,7 +25,7 @@
     </div>
 
     <div class="mb-3">
-        <label>Sumber Dana</label>
+        <label>Tujuan</label>
         <input type="text" name="sumber_dana" class="form-control" value="{{ $kas->sumber_dana ?? '' }}" required>
     </div>
 

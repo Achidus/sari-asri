@@ -26,7 +26,7 @@
             </div>
 
             <div class="col-md-6">
-                <label for="sumber_dana" class="form-label">Sumber Dana</label>
+                <label for="sumber_dana" class="form-label">Tujuan</label>
                 <input type="text" id="sumber_dana" name="sumber_dana" class="form-control" 
                        value="{{ $kas->sumber_dana ?? '' }}" required>
             </div>
