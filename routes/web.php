@@ -73,6 +73,10 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth', 'checkRole:admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
+   Route::get('nasabah/{id}/tarik-saldo', [AdminNasabahController::class, 'tarikSaldoForm'])->name('admin.nasabah.tarik_saldo_form');
+Route::post('nasabah/{id}/tarik-saldo', [AdminNasabahController::class, 'tarikSaldo'])->name('admin.nasabah.tarik_saldo');
+
+
     // Data Master
     Route::resource('/data-nasabah', AdminNasabahController::class)->names('admin.nasabah');
     Route::resource('/data-petugas', AdminPetugasController::class)->names('admin.petugas');
@@ -107,10 +111,13 @@ Route::middleware(['auth', 'checkRole:admin'])->prefix('admin')->group(function 
     Route::get('/laporan', [AdminLaporanController::class, 'index'])->name('admin.laporan.index');
     Route::get('/laporan/print', [AdminLaporanController::class, 'print'])->name('admin.laporan.print');
 
-    // Tarik Saldo
-    Route::get('/tarik-saldo', [AdminTarikSaldoController::class, 'index'])->name('admin.tarik-saldo.index');
-    Route::post('/tarik-saldo/setujui/{id}', [AdminTarikSaldoController::class, 'setujui'])->name('admin.tarik-saldo.setujui');
-    Route::post('/tarik-saldo/tolak/{id}', [AdminTarikSaldoController::class, 'tolak'])->name('admin.tarik-saldo.tolak');
+    // Tarik Saldo (Pencairan Saldo)
+Route::resource('/pencairan-saldo', AdminTarikSaldoController::class)->names('admin.pencairan_saldo');
+
+// Aksi khusus (opsional, misalnya butuh tombol setujui/tolak)
+Route::post('/pencairan-saldo/setujui/{id}', [AdminTarikSaldoController::class, 'setujui'])->name('admin.pencairan_saldo.setujui');
+Route::post('/pencairan-saldo/tolak/{id}', [AdminTarikSaldoController::class, 'tolak'])->name('admin.pencairan_saldo.tolak');
+
 
     // Pengiriman
     Route::resource('/pengiriman/sampah', AdminPengirimanPengepulController::class)->names('admin.pengiriman');

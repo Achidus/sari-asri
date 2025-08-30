@@ -346,6 +346,21 @@
     </div>
 </div>
 
+<div class="row mb-4">
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Nasabah Aktif vs Tidak Aktif</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="nasabahChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 @endsection
 <style>
     a.text-decoration-none.text-dark:hover {
@@ -444,6 +459,38 @@ document.addEventListener('DOMContentLoaded', function() {
         options: { responsive: true, scales: { y: { beginAtZero: true } } }
     });
 });
+
+// Diagram Batang Nasabah
+new Chart(document.getElementById('nasabahChart'), {
+    type: 'bar',
+    data: {
+        labels: ['Aktif', 'Tidak Aktif'],
+        datasets: [{
+            label: 'Jumlah Nasabah',
+            data: [{{ $nasabahAktif }}, {{ $nasabahTidakAktif }}],
+            backgroundColor: ['#28a745', '#dc3545'],
+            borderRadius: 8 // sudut rounded
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false // label di atas bar
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 1
+                }
+            }
+        }
+    }
+});
+
+
 </script>
 @endpush
 

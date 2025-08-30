@@ -93,24 +93,26 @@ class NasabahController extends Controller
      * Display the specified resource.
      */
     public function show($id)
-    {
-        // Ambil data nasabah
-        $nasabah = Nasabah::findOrFail($id);
+{
+    $nasabah = Nasabah::with('saldo')->findOrFail($id);
 
-        // Ambil riwayat setoran (transaksi)
-        $riwayatSetoran = Transaksi::with(['detailTransaksi.sampah'])
-            ->where('nasabah_id', $id)
-            ->orderBy('tanggal_transaksi', 'desc')
-            ->get();
+    // Riwayat setoran
+    $riwayatSetoran = Transaksi::with('detailTransaksi.sampah')
+        ->where('nasabah_id', $nasabah->id)
+        ->orderBy('tanggal_transaksi', 'desc')
+        ->get();
 
-        // Ambil riwayat penarikan saldo
-        $riwayatPenarikan = PencairanSaldo::with('metodePencairan')
-            ->where('nasabah_id', $id)
-            ->orderBy('tanggal_pengajuan', 'desc')
-            ->get();
+    // Riwayat penarikan saldo (ambil dari pencairan_saldo)
+    $riwayatPenarikan = PencairanSaldo::where('nasabah_id', $nasabah->id)
+        ->orderBy('created_at', 'desc')
+        ->get();
 
-        return view('pages.admin.nasabah.show', compact('nasabah', 'riwayatSetoran', 'riwayatPenarikan'));
-    }
+    return view('pages.admin.nasabah.show', compact(
+        'nasabah',
+        'riwayatSetoran',
+        'riwayatPenarikan'
+    ));
+}
 
     /**
      * Show the form for editing the specified resource.
@@ -180,5 +182,46 @@ class NasabahController extends Controller
         return redirect()->route('admin.nasabah.index');
 }
 
+public function tarikSaldoForm($id)
+{
+    $nasabah = Nasabah::with('saldo')->findOrFail($id);
+
+    return view('pages.admin.nasabah.tarik_saldo', compact('nasabah'));
+}
+
+public function tarikSaldo(Request $request, $id)
+{
+    $nasabah = Nasabah::with('saldo')->findOrFail($id);
+
+    $request->validate([
+        'jumlah' => 'required|numeric|min:1000',
+        'metode' => 'required|in:tarik_tunai,transfer',
+        'keterangan' => 'nullable|string|max:255'
+    ]);
+
+    $saldo = $nasabah->saldo;
+
+    if ($saldo->saldo < $request->jumlah) {
+        Alert::error('Gagal!', 'Saldo tidak mencukupi!')->autoclose(3000);
+        return redirect()->back();
+    }
+
+    // Kurangi saldo
+    $saldo->saldo -= $request->jumlah;
+    $saldo->save();
+
+    // Simpan ke pencairan saldo
+    PencairanSaldo::create([
+        'nasabah_id' => $nasabah->id,
+        'jumlah' => $request->jumlah,
+        'metode' => $request->metode, // tarik_tunai / transfer
+        'keterangan' => $request->keterangan,
+        'tanggal_pengajuan' => now(),
+        'status' => 'selesai' // bisa juga pending dulu kalau perlu approval
+    ]);
+
+    Alert::success('Berhasil!', 'Saldo berhasil ditarik!')->autoclose(3000);
+    return redirect()->route('admin.nasabah.show', $nasabah->id);
+}
 
 }

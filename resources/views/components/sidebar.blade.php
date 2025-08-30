@@ -100,7 +100,7 @@
                         <div class="collapse" id="transaksi">
                             <ul class="nav nav-collapse">
                                 <li><a href="{{ route('admin.transaksi.index') }}"><span class="sub-item">Transaksi Setoran</span></a></li>
-                                <li><a href="{{ route('admin.tarik-saldo.index') }}"><span class="sub-item">Tarik Saldo</span></a></li>
+                                <li><a href="{{ route('admin.pencairan_saldo.index') }}"><span class="sub-item">Tarik Saldo</span></a></li>
                                 <li><a href="{{ route('admin.pengiriman.index') }}"><span class="sub-item">Pengiriman Sampah</span></a></li>
                             </ul>
                         </div>

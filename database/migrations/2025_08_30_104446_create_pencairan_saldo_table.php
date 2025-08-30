@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('pencairan_saldo', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('nasabah_id')->constrained('nasabah')->onDelete('cascade');
-            $table->foreignId('metode_id')->constrained('metode_pencairan')->onDelete('cascade');
+            $table->foreignId('nasabah_id')
+                  ->constrained('nasabah')
+                  ->onDelete('cascade');
             $table->decimal('jumlah_pencairan', 15, 2);
-            $table->timestamp('tanggal_pengajuan')->nullable();
-            $table->timestamp('tanggal_proses')->nullable();
-            $table->enum('status', ['pending', 'disetujui', 'ditolak']);
-            $table->text('keterangan')->nullable();
+            $table->enum('metode_pencairan', ['Tarik Tunai', 'Transfer']);
+            $table->string('nomor_rekening', 50)->nullable();
+            $table->enum('status', ['pending', 'disetujui', 'ditolak'])->default('pending');
             $table->timestamps();
         });
     }

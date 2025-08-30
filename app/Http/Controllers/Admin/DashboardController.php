@@ -78,6 +78,9 @@ class DashboardController extends Controller
                 ->whereMonth('created_at',$month)
                 ->whereYear('created_at', $tahunIni)
                 ->sum('nominal');
+// Hitung nasabah aktif vs tidak aktif
+$nasabahAktif = Nasabah::where('status', 'aktif')->count();
+$nasabahTidakAktif = Nasabah::where('status', '!=', 'aktif')->count();
 
             $kasKeluarBulan = Kas::where('jenis','keluar')
                 ->whereMonth('created_at',$month)
@@ -125,7 +128,10 @@ class DashboardController extends Controller
             'kasKeluarPerBulan',
             'sampahMasukPerBulan',
             'sampahTerkirimPerBulan',
-            'saldoBersihPerBulan'
+            'saldoBersihPerBulan',
+            'nasabahAktif',
+    'nasabahTidakAktif'
+
         ));
     }
 }

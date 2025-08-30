@@ -5,79 +5,125 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PencairanSaldo;
-use App\Models\Saldo;
+use App\Models\Nasabah;
 
 class PencairanSaldoController extends Controller
 {
-    public function index()
-    {
-        $pencairanSaldo = PencairanSaldo::with(['nasabah', 'metode'])
-            ->where('status', 'pending')
-            ->orderBy('tanggal_pengajuan', 'desc')
-            ->paginate(10);
+    public function index(Request $request)
+{
+    $query = PencairanSaldo::with('nasabah');
 
-        return view('pages.admin.pencairan_saldo.index', compact('pencairanSaldo'));
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->whereHas('nasabah', function($q) use ($search) {
+            $q->where('nama_lengkap', 'like', "%{$search}%")
+              ->orWhere('no_registrasi', 'like', "%{$search}%");
+        });
     }
 
-    /**
-     * Proses persetujuan permintaan pencairan saldo.
-     */
-    public function setujui(Request $request, $id)
+    $pencairan = $query->latest()->paginate(10);
+
+    return view('pages.admin.pencairan_saldo.index', compact('pencairan'));
+}
+
+
+    public function create()
     {
-        $request->validate([
-            'jumlah_pencairan' => 'required|numeric|min:0',
-        ]);
+        $nasabah = Nasabah::all();
+        return view('pages.admin.pencairan_saldo.create', compact('nasabah'));
+    }
 
-        $pencairan = PencairanSaldo::findOrFail($id);
+    public function store(Request $request)
+{
+    $request->validate([
+        'nasabah_id' => 'required|exists:nasabah,id',
+        'jumlah_pencairan' => 'required|numeric|min:1000',
+        'metode_pencairan' => 'required|string',
+        'status' => 'required|in:pending,disetujui,ditolak',
+    ]);
 
-        // Pastikan statusnya masih pending
-        if ($pencairan->status !== 'pending') {
-            return redirect()->back()->withErrors(['msg' => 'Permintaan sudah diproses sebelumnya.']);
+    $nasabah = Nasabah::with('saldo')->findOrFail($request->nasabah_id);
+    $saldo = $nasabah->saldo;
+
+    // ✅ Cek saldo cukup hanya kalau status disetujui
+    if ($request->status === 'disetujui') {
+        if (!$saldo || $saldo->saldo < $request->jumlah_pencairan) {
+            return back()->withInput()->with('error', 'Saldo nasabah tidak mencukupi untuk pencairan!');
         }
+    }
 
-        // Cek saldo nasabah
-        $saldo = Saldo::where('nasabah_id', $pencairan->nasabah_id)->first();
+    // Simpan pencairan saldo
+    $pencairan = PencairanSaldo::create([
+        'nasabah_id' => $request->nasabah_id,
+        'jumlah_pencairan' => $request->jumlah_pencairan,
+        'metode_pencairan' => $request->metode_pencairan,
+        'nomor_rekening' => $request->nomor_rekening,
+        'status' => $request->status,
+    ]);
 
-        if (!$saldo || $saldo->saldo < $pencairan->jumlah_pencairan) {
-            return redirect()->back()->withErrors(['msg' => 'Saldo tidak mencukupi untuk pencairan.']);
-        }
-
-        // Proses pengurangan saldo
-        $saldo->saldo -= $pencairan->jumlah_pencairan;
+    // ✅ Update saldo kalau disetujui
+    if ($request->status === 'disetujui') {
+        $saldo->saldo -= $request->jumlah_pencairan;
         $saldo->save();
-
-        // Update status pencairan saldo
-        $pencairan->status = 'disetujui';
-        $pencairan->tanggal_proses = now();
-        $pencairan->updated_at = now();
-        $pencairan->save();
-
-        return redirect()->route('pages.admin.pencairan_saldo.index')->with('success', 'Permintaan pencairan saldo telah disetujui.');
     }
 
-    /**
-     * Proses penolakan permintaan pencairan saldo.
-     */
-    public function tolak(Request $request, $id)
+    return redirect()->route('admin.pencairan_saldo.index')
+        ->with('success', 'Pencairan saldo berhasil ditambahkan.');
+}
+
+
+
+    public function edit($id)
     {
-        $request->validate([
-            'keterangan' => 'required|string|max:255',
-        ]);
-
-        // Ambil data pencairan saldo berdasarkan ID
         $pencairan = PencairanSaldo::findOrFail($id);
+        $nasabah = Nasabah::all();
+        return view('pages.admin.pencairan_saldo.edit', compact('pencairan', 'nasabah'));
+    }
 
-        // Pastikan status masih 'pending'
-        if ($pencairan->status !== 'pending') {
-            return redirect()->back()->withErrors(['msg' => 'Permintaan sudah diproses sebelumnya.']);
+    public function update(Request $request, $id)
+{
+    $pencairan = PencairanSaldo::findOrFail($id);
+    $nasabah   = Nasabah::with('saldo')->findOrFail($pencairan->nasabah_id);
+
+    $oldStatus = $pencairan->status;
+    $newStatus = $request->status;
+
+    // kalau status lama disetujui → lalu diganti pending/ditolak → saldo dikembalikan
+    if ($oldStatus === 'disetujui' && in_array($newStatus, ['pending', 'ditolak'])) {
+        $nasabah->saldo->saldo += $pencairan->jumlah_pencairan;
+        $nasabah->saldo->save();
+    }
+
+    // kalau status lama bukan disetujui → lalu diganti jadi disetujui → saldo dikurangi
+    if ($oldStatus !== 'disetujui' && $newStatus === 'disetujui') {
+        if ($nasabah->saldo->saldo < $request->jumlah_pencairan) {
+            return back()->withErrors(['saldo' => 'Saldo nasabah tidak mencukupi.']);
         }
 
-        // Update status pencairan menjadi 'ditolak'
-        $pencairan->status = 'ditolak';
-        $pencairan->keterangan = $request->keterangan;
-        $pencairan->tanggal_proses = now();
-        $pencairan->save();
+        $nasabah->saldo->saldo -= $request->jumlah_pencairan;
+        $nasabah->saldo->save();
+    }
 
-        return redirect()->route('tarik-saldo.index')->with('error', 'Pengajuan pencairan saldo ditolak.');
+    // update data pencairan
+    $pencairan->update([
+        'nasabah_id'       => $request->nasabah_id,
+        'jumlah_pencairan' => $request->jumlah_pencairan,
+        'metode_pencairan' => $request->metode_pencairan,
+        'nomor_rekening'   => $request->nomor_rekening,
+        'status'           => $newStatus,
+    ]);
+
+    return redirect()->route('admin.pencairan_saldo.index')
+        ->with('success', 'Data pencairan berhasil diperbarui.');
+}
+
+
+    public function destroy($id)
+    {
+        $pencairan = PencairanSaldo::findOrFail($id);
+        $pencairan->delete();
+
+        return redirect()->route('admin.pencairan_saldo.index')
+            ->with('success', 'Data berhasil dihapus');
     }
 }

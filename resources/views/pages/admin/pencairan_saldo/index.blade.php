@@ -1,114 +1,91 @@
 @extends('layouts.app')
 
-@section('title', 'Pengajuan Tarik Saldo')
+@section('title', 'Nasabah')
 
 @push('style')
-    <!-- CSS Libraries -->
-    <link rel="stylesheet" href="{{ asset('library/selectric/public/selectric.css') }}">
+<style>
+    table thead tr th {
+        background-color: #007bff !important; /* biru */
+        color: #fff !important;              /* putih */
+        text-align: center;
+        vertical-align: middle;
+    }
+</style>
 @endpush
+
 
 @section('main')
-    <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
-        <div>
-            <h3 class="fw-bold mb-3">Permintaan Penarikan Saldo</h3>
-            <h6 class="op-7 mb-2">Anda dapat mengelola permintaan penarikan saldo yang masuk.</h6>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Riwayat Pencairan Saldo</h4>
+    <a href="{{ route('admin.pencairan_saldo.create') }}" class="btn btn-primary">+ Tambah Pencairan</a>
+</div>
+<form method="GET" action="{{ route('admin.pencairan_saldo.index') }}" class="mb-3">
+    <div class="input-group" style="max-width: 400px;">
+        <input type="text" name="search" class="form-control" placeholder="Cari No. Registrasi / Nama Nasabah..."
+               value="{{ request('search') }}">
+        <div class="input-group-append">
+            <button class="btn btn-outline-primary" type="submit">Cari</button>
         </div>
     </div>
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
+</form>
 
-                <div class="card-body">
+<div class="card">
+    <div class="card-body">
+        <table class="table table-bordered table-hover">
+           <thead>
+<tr>
+    <th>No</th> <!-- Nomor urut -->
+    <th>No. Reg</th>
+    <th>Nasabah</th>
+    <th>Jumlah</th>
+    <th>Metode</th>
+    <th>Status</th>
+    <th>Tanggal Pengajuan</th>
+   <th style="width: 130px;">Aksi</th> <!-- kolom aksi lebih kecil -->
 
-                    <div class="clearfix mb-3"></div>
-
-                    <div class="table-responsive">
-                        <table class="table table-hover table-bordered table-head-bg-primary">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Tanggal Pengajuan</th>
-                                    <th>Nama Nasabah</th>
-                                    <th>Jumlah Penarikan</th>
-                                    <th>Metode Pencairan</th>
-                                    <th>No Rekening</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($pencairanSaldo as $index => $pencairan)
-                                    <tr>
-                                        <td>{{ $pencairanSaldo->firstItem() + $index }}</td>
-                                        <td>{{ $pencairan->tanggal_pengajuan->format('d-m-Y H:i') }}</td>
-                                        <td>{{ $pencairan->nasabah->nama_lengkap }}</td>
-                                        <td>{{ number_format($pencairan->jumlah_pencairan, 0, ',', '.') }}</td>
-                                        <td>{{ $pencairan->metode->nama_metode }}</td>
-                                        <td>{{ $pencairan->no_rek }}</td>
-                                        <td>
-                                            <form action="{{ route('admin.tarik-saldo.setujui', $pencairan->id) }}"
-                                                method="POST" style="display:inline;">
-                                                @csrf
-                                                <button type="submit" class="btn btn-success"
-                                                    onclick="return confirm('Apakah Anda yakin ingin menyetujui pengajuan ini?')">Setujui</button>
-                                            </form>
-
-                                            <!-- Tombol untuk memicu modal -->
-                                            <button type="button" class="btn btn-danger" data-toggle="modal"
-                                                data-target="#modalTolak" onclick="setRejectData('{{ $pencairan->id }}')"
->
-                                                Tolak
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-
-                    </div>
-                    <div class="float-right">
-                        {{ $pencairanSaldo->withQueryString()->links() }}
-                    </div>
-                </div>
-            </div>
-        </div>
+</tr>
+</thead>
+<tbody>
+@forelse($pencairan as $item)
+<tr>
+    <td>{{ $loop->iteration }}</td> <!-- Nomor urut otomatis -->
+    <td>{{ $item->nasabah->no_registrasi }}</td>
+    <td>{{ $item->nasabah->nama_lengkap }}</td>
+    <td>Rp {{ number_format($item->jumlah_pencairan, 0, ',', '.') }}</td>
+    <td>{{ ucfirst($item->metode_pencairan) }}</td>
+    <td>
+        <span class="badge 
+            @if($item->status == 'pending') badge-warning 
+            @elseif($item->status == 'disetujui') badge-success 
+            @else badge-danger @endif">
+            {{ ucfirst($item->status) }}
+        </span>
+    </td>
+    <td>{{ \Carbon\Carbon::parse($item->tanggal_pengajuan)->format('d M Y H:i') }}</td>
+   <td>
+    <div class="d-flex flex-wrap gap-1"> <!-- gap lebih rapat -->
+        <a href="{{ route('admin.pencairan_saldo.edit', $item->id) }}" 
+           class="btn btn-warning btn-sm">Edit</a>
+        <form action="{{ route('admin.pencairan_saldo.destroy', $item->id) }}" 
+              method="POST" 
+              onsubmit="return confirm('Yakin hapus data ini?')">
+            @csrf
+            @method('DELETE')
+            <button class="btn btn-danger btn-sm">Hapus</button>
+        </form>
     </div>
-    <div class="modal fade" id="modalTolak" tabindex="-1" role="dialog" aria-labelledby="modalTolakLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <form id="formTolak" method="POST">
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalTolakLabel">Tolak Pengajuan</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <input type="hidden" name="id" id="tolakId">
-                        <div class="form-group">
-                            <label for="keterangan">Keterangan Penolakan</label>
-                            <textarea name="keterangan" id="keterangan" class="form-control" rows="3" required></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-danger">Tolak</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+</td>
 
+</tr>
+@empty
+<tr>
+    <td colspan="8" class="text-center">Belum ada data</td>
+</tr>
+@endforelse
+</tbody>
+
+
+        </table>
+    </div>
+</div>
 @endsection
-
-@push('scripts')
-    <script>
-        // Fungsi untuk mengisi ID pengajuan ke dalam modal
-        function setRejectData(id) {
-            const url = "{{ route('admin.tarik-saldo.tolak', ':id') }}".replace(':id', id);
-            document.getElementById('formTolak').action = url;
-            document.getElementById('tolakId').value = id;
-        }
-    </script>
-@endpush

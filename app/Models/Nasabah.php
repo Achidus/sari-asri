@@ -41,4 +41,22 @@ class Nasabah extends Model
     {
         return $this->hasMany(PencairanSaldo::class, 'nasabah_id');
     }
+    // App\Models\Nasabah.php
+public function getSisaSaldoAttribute()
+{
+    $totalSetoran = $this->hasMany(\App\Models\Transaksi::class, 'nasabah_id')
+        ->with('detailTransaksi')
+        ->get()
+        ->flatMap->detailTransaksi
+        ->sum(function ($detail) {
+            return $detail->subtotal ?? 0;
+        });
+
+    $totalPenarikan = $this->hasMany(\App\Models\PencairanSaldo::class, 'nasabah_id')
+        ->where('status', 'disetujui') // hanya yang sudah dicairkan
+        ->sum('jumlah_pencairan');
+
+    return $totalSetoran - $totalPenarikan;
+}
+
 }
