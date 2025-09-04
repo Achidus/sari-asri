@@ -32,12 +32,15 @@ use App\Models\Sampah;
 use App\Models\Nasabah;
 use App\Models\Artikel;
 use App\Models\PengirimanPengepul;
+use App\Http\Controllers\FeedbackController;
+
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 */
+Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
 
 // Halaman utama
 Route::get('/', function (Request $request) {

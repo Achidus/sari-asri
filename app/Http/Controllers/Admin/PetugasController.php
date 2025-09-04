@@ -39,7 +39,7 @@ class PetugasController extends Controller
             'role' => $request->role,
         ]);
 
-        return redirect()->route('pages.admin.petugas.index')->with('success', 'Petugas berhasil ditambahkan.');
+        return redirect()->route('admin.petugas.index')->with('success', 'Petugas berhasil ditambahkan.');
     }
 
     // public function show(Petugas $petugas)
@@ -51,7 +51,7 @@ class PetugasController extends Controller
     {
         $petugas = Petugas::findOrFail($id);
 
-        return view('pages.admin.petugas.edit', compact('petugas'));
+        return view('admin.petugas.edit', compact('petugas'));
     }
 
     public function update(Request $request, $id)

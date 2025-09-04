@@ -11,14 +11,13 @@ class FeedbackController extends Controller
 {
     public function index()
     {
-        $feedbacks = Feedback::with('nasabah')->paginate(10);
-
+        $feedbacks = Feedback::latest()->paginate(10);
         return view('pages.admin.feedback.index', compact('feedbacks'));
     }
 
     public function show($id)
     {
-        $feedback = Feedback::with('nasabah')->findOrFail($id);
+        $feedback = Feedback::findOrFail($id);
         return view('pages.admin.feedback.show', compact('feedback'));
     }
 

@@ -102,115 +102,134 @@
               <div class="row justify-content-center gx-2 gy-2">
                 <!-- Ulangi hingga 19 orang -->
                 <!-- Contoh Anggota 1 -->
-                <div class="col-3 col-sm-1 col-md-2 text-center">
+                <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-4">
+
                   <img src="/images/1.jpeg" class="rounded-circle img-fluid" 
                        style="width: 100px; height: 100px; object-fit: cover;">
                   <p class="small mt-1 mb-0"><strong>Citra Lailatul</strong></p>
                 </div>
           
                 <!-- Contoh Anggota 2 -->
-                <div class="col-3 col-sm-1 col-md-2 text-center">
+                <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-4">
+
                   <img src="/images/2.jpeg" class="rounded-circle img-fluid" 
                        style="width: 100px; height: 100px; object-fit: cover;">
                   <p class="small mt-1 mb-0"><strong>Siblih</strong></p>
                 </div>
-                <div class="col-3 col-sm-1 col-md-2 text-center">
+                <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-4">
+
                     <img src="/images/3.jpeg" class="rounded-circle img-fluid" 
                          style="width: 100px; height: 100px; object-fit: cover;">
                     <p class="small mt-1 mb-0"><strong>Fauziya</strong></p>
                   </div>
             
                   <!-- Contoh Anggota 2 -->
-                  <div class="col-3 col-sm-1 col-md-2 text-center">
+                  <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-4">
+
                     <img src="/images/4.jpeg" class="rounded-circle img-fluid" 
                          style="width: 100px; height: 100px; object-fit: cover;">
                     <p class="small mt-1 mb-0"><strong>Ika Nur F.</strong></p>
                   </div>
-                  <div class="col-3 col-sm-1 col-md-2 text-center">
+                  <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-4">
+
                     <img src="/images/5.jpeg" class="rounded-circle img-fluid" 
                          style="width: 100px; height: 100px; object-fit: cover;">
                     <p class="small mt-1 mb-0"><strong>Muslimatil F.</strong></p>
                   </div>
             
                   <!-- Contoh Anggota 2 -->
-                  <div class="col-3 col-sm-1 col-md-2 text-center">
+                  <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-4">
+
                     <img src="/images/6.jpeg" class="rounded-circle img-fluid" 
                          style="width: 100px; height: 100px; object-fit: cover;">
                     <p class="small mt-1 mb-0"><strong>Nur Fitriani</strong></p>
                   </div>
-                  <div class="col-3 col-sm-1 col-md-2 text-center">
+                  <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-4">
+
                     <img src="/images/7.jpeg" class="rounded-circle img-fluid" 
                          style="width: 100px; height: 100px; object-fit: cover;">
                     <p class="small mt-1 mb-0"><strong>Sevil Felix</strong></p>
                   </div>
             
                   <!-- Contoh Anggota 2 -->
-                  <div class="col-3 col-sm-1 col-md-2 text-center">
+                  <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-4">
+
                     <img src="/images/8.jpeg" class="rounded-circle img-fluid" 
                          style="width: 100px; height: 100px; object-fit: cover;">
                     <p class="small mt-1 mb-0"><strong>Ikhwan</strong></p>
                   </div>
-                  <div class="col-3 col-sm-1 col-md-2 text-center">
+                  <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-4">
+
                     <img src="/images/9.jpeg" class="rounded-circle img-fluid" 
                          style="width: 100px; height: 100px; object-fit: cover;">
                     <p class="small mt-1 mb-0"><strong>M.Zainul R.</strong></p>
                   </div>
             
                   <!-- Contoh Anggota 2 -->
-                  <div class="col-3 col-sm-1 col-md-2 text-center">
+                  <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-4">
+
                     <img src="/images/10.jpeg" class="rounded-circle img-fluid" 
                          style="width: 100px; height: 100px; object-fit: cover;">
                     <p class="small mt-1 mb-0"><strong>Sintia Putri</strong></p>
                   </div>
-                  <div class="col-3 col-sm-1 col-md-2 text-center">
+                  <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-4">
+
                     <img src="/images/11.jpeg" class="rounded-circle img-fluid" 
                          style="width: 100px; height: 100px; object-fit: cover;">
                     <p class="small mt-1 mb-0"><strong>Wibowo Adi</strong></p>
                   </div>
             
                   <!-- Contoh Anggota 2 -->
-                  <div class="col-3 col-sm-1 col-md-2 text-center">
+                  <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-4">
+
                     <img src="/images/12.jpeg" class="rounded-circle img-fluid" 
                          style="width: 100px; height: 100px; object-fit: cover;">
                     <p class="small mt-1 mb-0"><strong>Siti Amilatus</strong></p>
                   </div>
-                  <div class="col-3 col-sm-1 col-md-2 text-center">
+                  <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-4">
+
                     <img src="/images/13.jpeg" class="rounded-circle img-fluid" 
                          style="width: 100px; height: 100px; object-fit: cover;">
                     <p class="small mt-1 mb-0"><strong>M.Miftahul F.</strong></p>
                   </div>
             
                   <!-- Contoh Anggota 2 -->
-                  <div class="col-3 col-sm-1 col-md-2 text-center">
+                  <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-4">
+
                     <img src="/images/14.jpeg" class="rounded-circle img-fluid" 
                          style="width: 100px; height: 100px; object-fit: cover;">
                     <p class="small mt-1 mb-0"><strong>Wiwin Nur</strong></p>
                   </div>
-                  <div class="col-3 col-sm-1 col-md-2 text-center">
+                  <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-4">
+
                     <img src="/images/15.jpeg" class="rounded-circle img-fluid" 
                          style="width: 100px; height: 100px; object-fit: cover;">
                     <p class="small mt-1 mb-0"><strong>Ahmad Rosyidi</strong></p>
                   </div>
             
                   <!-- Contoh Anggota 2 -->
-                  <div class="col-3 col-sm-1 col-md-2 text-center">
+                  <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-4">
+
                     <img src="/images/17.jpeg" class="rounded-circle img-fluid" 
                          style="width: 100px; height: 100px; object-fit: cover;">
                     <p class="small mt-1 mb-0"><strong>M.Fathur R.</strong></p>
                   </div>
-                  <div class="col-3 col-sm-1 col-md-2 text-center">
+                  <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-4">
+
                     <img src="/images/gambar20.jpeg" class="rounded-circle img-fluid" 
                          style="width: 100px; height: 100px; object-fit: cover;">
                     <p class="small mt-1 mb-0"><strong>Sintia Rusdianti</strong></p>
                   </div>
             
                   <!-- Contoh Anggota 2 -->
-                  <div class="col-3 col-sm-1 col-md-2 text-center">
+                  <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-4">
+
                     <img src="/images/gambar21.jpeg" class="rounded-circle img-fluid" 
                          style="width: 100px; height: 100px; object-fit: cover;">
-                    <p class="small mt-1 mb-0"><strong>Ilma Nafidatul</strong></p>
+                    <p class="small mt-1 mb-0"><strong>Ilma Nafrotul Ula</strong></p>
                   </div>
-                  <div class="col-3 col-sm-1 col-md-2 text-center">
+                  <div class="col-6 col-sm-4 col-md-3 col-lg-2 text-center mb-4">
+
                     <img src="/images/16.jpeg" class="rounded-circle img-fluid" 
                          style="width: 100px; height: 100px; object-fit: cover;">
                     <p class="small mt-1 mb-0"><strong>Ahmad Agung</strong></p>
@@ -227,6 +246,140 @@
   </svg>
 </div>
 
+<!-- Floating Feedback Button -->
+<div id="feedback-button" 
+     class="feedback-btn">
+    <i class="bi bi-chat-dots-fill"></i>
+</div>
+
+<!-- Feedback Modal -->
+<div id="feedback-modal" class="feedback-modal">
+    <div class="feedback-card">
+        <span id="close-feedback" class="close-btn">&times;</span>
+        <h3 class="text-center fw-bold mb-4">💬 Kirim Feedback</h3>
+
+        <form id="feedback-form">
+            @csrf
+            <!-- Subjek -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Subjek</label>
+                <input type="text" name="judul_feedback" 
+                       class="form-control custom-input" 
+                       placeholder="Tulis subjek feedback" required>
+            </div>
+
+            <!-- Nama Pengirim -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Nama Pengirim</label>
+                <input type="text" name="nama_pengirim" 
+                       class="form-control custom-input" 
+                       placeholder="Nama Anda" required>
+            </div>
+
+            <!-- Isi Feedback -->
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Isi Feedback</label>
+                <textarea name="isi_feedback" rows="4" 
+                          class="form-control custom-input" 
+                          placeholder="Tulis pesan Anda..." required></textarea>
+            </div>
+
+            <!-- Tombol -->
+            <div class="text-end">
+                <button type="submit" class="btn btn-gradient px-4">
+                    <i class="bi bi-send-fill"></i> Kirim
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+/* Floating button */
+.feedback-btn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background: linear-gradient(135deg, #4f46e5, #6d28d9);
+    color: white;
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    z-index: 1000;
+}
+.feedback-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.35);
+}
+
+/* Modal background */
+.feedback-modal {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(2px);
+    z-index: 1100;
+    display: flex; align-items: center; justify-content: center;
+}
+
+/* Modal card */
+.feedback-card {
+    background: #fff;
+    padding: 30px;
+    border-radius: 16px;
+    width: 100%; max-width: 500px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    position: relative;
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Close button */
+.close-btn {
+    position: absolute;
+    top: 15px; right: 20px;
+    font-size: 22px;
+    cursor: pointer;
+    color: #888;
+    transition: color 0.2s ease;
+}
+.close-btn:hover { color: #333; }
+
+/* Input styling */
+.custom-input {
+    border-radius: 10px;
+    padding: 10px 14px;
+    background: #f9fafb;
+    border: 1px solid #ddd;
+    transition: all 0.2s;
+}
+.custom-input:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 6px rgba(79,70,229,0.3);
+}
+
+/* Gradient button */
+.btn-gradient {
+    background: linear-gradient(135deg, #4f46e5, #6d28d9);
+    color: white;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+.btn-gradient:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+/* Animasi */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+</style>
 
     <!-- Mashead header-->
     <header class="masthead">
@@ -345,8 +498,6 @@
             <tr>
                 <th>#</th>
                 <th>Nama</th>
-                <th>No. Registrasi</th>
-                <th>No. HP</th>
                 <th>Saldo</th>
                 <th>Status</th>
             </tr>
@@ -359,8 +510,7 @@
         aria-controls="offcanvas{{ $nasabah->id }}">
         <td>{{ $nasabahs->firstItem() + $index }}</td>
         <td>{{ $nasabah->nama_lengkap }}</td>
-        <td>{{ $nasabah->no_registrasi }}</td>
-        <td>{{ $nasabah->no_hp }}</td>
+
         <td>Rp{{ number_format($nasabah->saldo->saldo, 0, ',', '.') }}</td>
         <td>
             @if ($nasabah->status === 'aktif')
@@ -495,6 +645,38 @@
     <!-- Core theme JS-->
     <script src="js/scripts.js"></script>
     <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+  <script>
+document.getElementById('feedback-button').addEventListener('click', () => {
+    document.getElementById('feedback-modal').style.display = 'flex';
+});
+document.getElementById('close-feedback').addEventListener('click', () => {
+    document.getElementById('feedback-modal').style.display = 'none';
+});
+
+// submit via AJAX
+document.getElementById('feedback-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    let formData = new FormData(this);
+
+    fetch("{{ route('feedback.store') }}", {
+        method: "POST",
+        headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message || "Feedback berhasil dikirim!");
+        document.getElementById('feedback-modal').style.display = 'none';
+        this.reset();
+    })
+    .catch(err => console.error(err));
+});
+</script>
+
+
+
+
+
 </body>
 
 </html>

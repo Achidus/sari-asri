@@ -28,17 +28,21 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Tanggal Masuk</th>
-                                    <th>Nama Pengirim</th>
-                                    <th>Action</th>
+<th>Tanggal Masuk</th>
+<th>Nama Pengirim</th>
+<th>Subjek</th>
+<th>Action</th>
+
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($feedbacks as $index => $feedback)
                                     <tr>
                                         <td>{{ $feedbacks->firstItem() + $index }}</td>
-                                        <td>{{ $feedback->created_at->format('d-m-Y H:i') }}</td>
-                                        <td>{{ $feedback->nasabah->nama_lengkap }}</td>
+<td>{{ $feedback->created_at->format('d-m-Y H:i') }}</td>
+<td>{{ $feedback->nama_pengirim }}</td>
+<td>{{ $feedback->judul_feedback }}</td>
+
                                         <td>
                                             <a href="{{ route('admin.feedback.show', $feedback->id) }}"
                                                 class="btn btn-sm btn-info"><i class="fas fa-info-circle"></i> Detail</a>

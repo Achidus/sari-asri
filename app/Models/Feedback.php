@@ -9,15 +9,12 @@ class Feedback extends Model
 {
     use HasFactory;
 
-    protected $table = 'feedback';
+    protected $table = 'feedbacks'; // plural
 
     protected $fillable = [
-        'judul_feedback', 'isi_feedback', 'nasabah_id'
+        'judul_feedback',
+        'nama_pengirim',
+        'isi_feedback',
     ];
-
-    public function nasabah()
-    {
-        return $this->belongsTo(Nasabah::class, 'nasabah_id');
-    }
-
 }
+

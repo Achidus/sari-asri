@@ -29,8 +29,7 @@
                         </div>
                         <div class="form-group">
                             <label><strong>Nama Pengirim:</strong></label>
-                            <input type="text" class="form-control" value="{{ $feedback->nasabah->nama_lengkap }}"
-                                disabled>
+                            <input type="text" class="form-control" value="{{ $feedback->nama_pengirim }}" disabled>
                         </div>
                         <div class="form-group">
                             <label><strong>Isi Feedback:</strong></label>
@@ -49,11 +48,9 @@
             </div>
         </div>
     </div>
-
 @endsection
 
 @push('scripts')
-    <!-- JS Libraies -->
-
+    <!-- JS Libraries -->
     <!-- Page Specific JS File -->
 @endpush

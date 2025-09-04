@@ -50,8 +50,20 @@
                                 class="avatar-img rounded-circle">
                         </div>
                         <span class="profile-username">
-                            <span class="op-7">Siblih,</span> <span class="fw-bold">{{ Auth::user()->nama }}</span>
-                        </span>
+            @if(Auth::check())
+                <span class="op-7">
+                    @if(Auth::user()->role === 'admin')
+                        Admin,
+                    @elseif(Auth::user()->role === 'petugas')
+                        Petugas,
+                    @else
+                        User,
+                    @endif
+                </span> 
+                <span class="fw-bold">{{ Auth::user()->nama }}</span>
+            @endif
+        </span>
+
                     </a>
                     {{-- <ul class="dropdown-menu dropdown-user animated fadeIn">
                         <div class="dropdown-user-scroll scrollbar-outer">

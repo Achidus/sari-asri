@@ -20,8 +20,9 @@ class FeedbackSeeder extends Seeder
         for ($i = 0; $i < 20; $i++) {
             Feedback::create([
                 'judul_feedback' => $faker->sentence(6),
-                'isi_feedback' => $faker->paragraph(3),
-                'nasabah_id' => $faker->numberBetween(1, 7),
+                'nama_pengirim'  => $faker->name(),
+                'isi_feedback'   => $faker->paragraph(3),
+
             ]);
         }
     }

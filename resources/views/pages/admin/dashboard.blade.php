@@ -125,7 +125,8 @@
             </a>
         </div>
         <div class="col-sm-6 col-md-3">
-            <a href="/admin/nasabah/index.blade.php" class="text-decoration-none text-dark">
+           <a href="{{ route('admin.pencairan_saldo.index') }}" class="text-decoration-none text-dark">
+
             <div class="card card-stats card-round">
                 <div class="card-body">
                     <div class="row align-items-center">
@@ -460,31 +461,34 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Diagram Batang Nasabah
 new Chart(document.getElementById('nasabahChart'), {
     type: 'bar',
     data: {
-        labels: ['Aktif', 'Tidak Aktif'],
-        datasets: [{
-            label: 'Jumlah Nasabah',
-            data: [{{ $nasabahAktif }}, {{ $nasabahTidakAktif }}],
-            backgroundColor: ['#28a745', '#dc3545'],
-            borderRadius: 8 // sudut rounded
-        }]
+        labels: {!! json_encode($bulan) !!},
+        datasets: [
+            {
+                label: 'Nasabah Aktif',
+                data: {!! json_encode($nasabahAktifPerBulan) !!},
+                backgroundColor: '#28a745',
+                borderRadius: 6
+            },
+            {
+                label: 'Nasabah Tidak Aktif',
+                data: {!! json_encode($nasabahTidakAktifPerBulan) !!},
+                backgroundColor: '#dc3545',
+                borderRadius: 6
+            }
+        ]
     },
     options: {
         responsive: true,
         plugins: {
-            legend: {
-                display: false // label di atas bar
-            }
+            legend: { display: true }
         },
         scales: {
             y: {
                 beginAtZero: true,
-                ticks: {
-                    stepSize: 1
-                }
+                ticks: { stepSize: 1 }
             }
         }
     }
