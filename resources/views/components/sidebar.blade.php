@@ -53,7 +53,7 @@
                         <div class="collapse" id="data-master">
                             <ul class="nav nav-collapse">
                                 <li><a href="{{ route('admin.nasabah.index') }}"><span class="sub-item">Data Nasabah</span></a></li>
-                                <li><a href="{{ route('admin.petugas.index') }}"><span class="sub-item">Data Petugas</span></a></li>
+                                
                                 <li><a href="{{ route('admin.sampah.index') }}"><span class="sub-item">Data Sampah</span></a></li>
                                 <li><a href="{{ route('admin.pengepul.index') }}"><span class="sub-item">Data Pengepul</span></a></li>
                             </ul>
@@ -158,6 +158,7 @@
                         <div class="collapse" id="data-master">
                             <ul class="nav nav-collapse">
                                 <li><a href="{{ route('petugas.nasabah.index') }}"><span class="sub-item">Data Nasabah</span></a></li>
+                                <li><a href="{{ route('petugas.petugas.index') }}"><span class="sub-item">Data Petugas</span></a></li>
                             </ul>
                         </div>
                     </li>

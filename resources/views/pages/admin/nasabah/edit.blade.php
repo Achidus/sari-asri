@@ -134,18 +134,7 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label for="password">Password</label>
-                                    <input type="password" id="password"
-                                        class="form-control @error('password') is-invalid @enderror" name="password">
-                                    @error('password')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                    <small class="text-muted">Biarkan kosong jika tidak ingin mengubah
-                                        password.</small>
-                                </div>
-                            </div>
+                            
                         </div>
                         <div class="form-group">
                             <label for="alamat_lengkap">Alamat Lengkap</label>

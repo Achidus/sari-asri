@@ -2,16 +2,13 @@
 @section('title', 'Kas ' . ucfirst($jenis))
 
 @section('main')
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-        <h2 class="fw-bold">Kas {{ ucfirst($jenis) }}</h2>
-        <p class="text-muted">Anda dapat mengelola semua data kas, seperti menambah, mengedit, dan menghapus.</p>
-    </div>
-    <div>
-        <a href="{{ route('admin.kas.create', $jenis) }}" class="btn btn-primary">Tambah Pengeluaran</a>
-    </div>
+<div class="mb-3">
+    <h2 class="fw-bold">Kas {{ ucfirst($jenis) }}</h2>
+    <p class="text-muted">Anda dapat mengelola semua data kas, seperti menambah, mengedit, dan menghapus.</p>
 </div>
-<div class="row mb-4">
+
+<!-- Kotak Total Kas Keluar + Tombol Tambah -->
+<div class="d-flex justify-content-between align-items-center mb-4">
     <div class="col-md-4">
         <div class="card text-white bg-success shadow-sm">
             <div class="card-body text-center">
@@ -20,7 +17,13 @@
             </div>
         </div>
     </div>
+    <div>
+        <a href="{{ route('admin.kas.create', $jenis) }}" class="btn btn-primary">
+            Tambah Pengeluaran
+        </a>
+    </div>
 </div>
+
 <div class="card">
     <div class="card-body">
         <form action="" method="GET" class="mb-3 d-flex">

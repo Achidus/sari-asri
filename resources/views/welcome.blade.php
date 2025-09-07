@@ -323,7 +323,7 @@
     background: rgba(0,0,0,0.5);
     backdrop-filter: blur(2px);
     z-index: 1100;
-    display: flex; align-items: center; justify-content: center;
+    align-items: center; justify-content: center;
 }
 
 /* Modal card */
@@ -379,6 +379,7 @@
     from { opacity: 0; transform: translateY(15px); }
     to   { opacity: 1; transform: translateY(0); }
 }
+
 </style>
 
     <!-- Mashead header-->
@@ -446,46 +447,50 @@
             </div>
         </div>
     </section>
-    <section id="berita" class="py-5 bg-light">
+<section id="berita" class="py-5 bg-light">
   <div class="container">
     <h2 class="text-center mb-4 fw-bold">Berita Terbaru</h2>
     <div class="row g-4">
       @foreach ($artikels as $artikel)
         <div class="col-md-4">
-          <div class="card h-100 shadow-sm border-0 rounded-3">
+          <div class="card h-100 border-0 shadow-sm rounded-3">
             @if ($artikel->thumbnail)
               <img src="{{ asset('storage/thumbnail/' . $artikel->thumbnail) }}" 
-                   class="card-img-top" 
+                   class="card-img-top rounded-top"
                    alt="{{ $artikel->judul_postingan }}"
-                   style="height: 200px; object-fit: cover;">
+                   style="height: 220px; object-fit: cover;">
             @endif
             <div class="card-body d-flex flex-column">
-              <small class="text-uppercase text-success fw-bold">Berita</small>
+              <small class="text-uppercase text-muted fw-bold">Berita Bank Sampah</small>
               <h5 class="card-title fw-bold mt-2">
-                {{ Str::limit($artikel->judul_postingan, 70) }}
+                {{ Str::limit($artikel->judul_postingan, 90) }}
               </h5>
               <p class="card-text text-muted small">
-                {{ Str::limit(strip_tags($artikel->isi ?? ''), 120) }}
+                {{ $artikel->created_at->format('l, d F Y') }} — 
+                {{ Str::words(strip_tags($artikel->isi_postingan), 50, '...') }}
               </p>
-              <a href="{{ route('artikel.show', $artikel->slug) }}" class="mt-auto text-success fw-bold">
-    Baca Selengkapnya >>>
-</a>
-
-            </div>
-            <div class="card-footer bg-white border-0">
-              <small class="text-muted">{{ $artikel->created_at->format('d M Y') }}</small>
+              <a href="{{ route('artikel.show', $artikel->slug) }}" 
+                 class="mt-auto fw-bold text-success">
+                Baca Selengkapnya &gt;&gt;&gt;
+              </a>
             </div>
           </div>
         </div>
       @endforeach
     </div>
 
-    <!-- Pagination -->
-    <div class="d-flex justify-content-center mt-4">
-      {{ $artikels->links() }}
-    </div>
+   <div class="d-flex justify-content-center mt-4">
+    {{-- Tambahkan fragment #berita --}}
+    {{ $artikels->withQueryString()->fragment('berita')->links() }}
+</div>
+
+</div>
+
   </div>
 </section>
+
+
+
 
 <section class="bg-white py-5" id="nasabah">
     <div class="container">
@@ -498,7 +503,7 @@
             <tr>
                 <th>#</th>
                 <th>Nama</th>
-                <th>Saldo</th>
+               
                 <th>Status</th>
             </tr>
         </thead>
@@ -511,7 +516,7 @@
         <td>{{ $nasabahs->firstItem() + $index }}</td>
         <td>{{ $nasabah->nama_lengkap }}</td>
 
-        <td>Rp{{ number_format($nasabah->saldo->saldo, 0, ',', '.') }}</td>
+       
         <td>
             @if ($nasabah->status === 'aktif')
                 <span class="badge bg-success text-white">Aktif</span>
@@ -671,6 +676,15 @@ document.getElementById('feedback-form').addEventListener('submit', function(e) 
     })
     .catch(err => console.error(err));
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+    if (window.location.hash === "#berita") {
+        document.querySelector("#berita").scrollIntoView({
+            behavior: "smooth"
+        });
+    }
+});
+
 </script>
 
 

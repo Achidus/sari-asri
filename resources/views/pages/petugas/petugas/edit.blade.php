@@ -9,9 +9,9 @@
 @section('main')
     <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
         <div>
-            <h3 class="fw-bold mb-3">Form Tambah Petugas</h3>
+            <h3 class="fw-bold mb-3">Form Edit Petugas</h3>
             <h6 class="op-7 mb-2">
-                Silakan isi form di bawah ini untuk menambahkan petugas baru.
+                Silakan ubah informasi petugas di bawah ini.
             </h6>
         </div>
     </div>
@@ -22,34 +22,39 @@
                     <h4>Informasi Petugas</h4>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('admin.petugas.store') }}" method="POST">
+                    <form action="{{ route('petugas.petugas.update', $petugas->id) }}" method="POST">
                         @csrf
+                        @method('PUT')
                         <div class="form-group">
                             <label>Nama</label>
-                            <input type="text" name="nama" class="form-control" required>
+                            <input type="text" name="nama" class="form-control"
+                                value="{{ old('nama', $petugas->nama) }}" required>
                         </div>
                         <div class="form-group">
                             <label>Email</label>
-                            <input type="email" name="email" class="form-control" required>
+                            <input type="email" name="email" class="form-control"
+                                value="{{ old('email', $petugas->email) }}" required>
                         </div>
                         <div class="form-group">
                             <label>Username</label>
-                            <input type="text" name="username" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Password</label>
-                            <input type="password" name="password" class="form-control" required>
+                            <input type="text" name="username" class="form-control"
+                                value="{{ old('username', $petugas->username) }}" required>
                         </div>
                         <div class="form-group">
                             <label>Role</label>
                             <select name="role" class="form-control" required>
-                                <option value="petugas">Petugas</option>
-                                <option value="admin">Admin</option>
+                                <option value="petugas" {{ $petugas->role == 'petugas' ? 'selected' : '' }}>Petugas
+                                </option>
+                                <option value="admin" {{ $petugas->role == 'admin' ? 'selected' : '' }}>Admin</option>
                             </select>
                         </div>
                         <div class="form-group">
+                            <label>Password (Kosongkan jika tidak ingin mengubah)</label>
+                            <input type="password" name="password" class="form-control">
+                        </div>
+                        <div class="form-group">
                             <button type="submit" class="btn btn-primary">Simpan</button>
-                            <a href="{{ route('admin.petugas.index') }}" class="btn btn-secondary">Batal</a>
+                            <a href="{{ route('petugas.petugas.index') }}" class="btn btn-secondary">Batal</a>
                         </div>
                     </form>
                 </div>

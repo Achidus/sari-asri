@@ -63,16 +63,13 @@ class ArtikelController extends Controller
 }
 
 
-    public function show($slug)
-    {
-        // Ambil artikel berdasarkan slug
-        $artikel = Artikel::where('slug', $slug)->firstOrFail();
+    public function show($id)
+{
+    $artikel = Artikel::with('media')->findOrFail($id);
 
-        // Ambil artikel terbaru lainnya untuk ditampilkan di sidebar/rekomendasi
-        $artikels = Artikel::latest()->take(5)->get();
+    return view('pages.admin.artikel.show', compact('artikel'));
+}
 
-        return view('artikel.show', compact('artikel', 'artikels'));
-    }
 
 
     public function edit(string $id)

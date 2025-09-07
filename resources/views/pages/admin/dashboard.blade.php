@@ -37,19 +37,22 @@
 </div>
 
         <div class="col-sm-6 col-md-3">
-            <a href="{{ route('admin.petugas.index') }}" class="text-decoration-none text-dark">
             <div class="card card-stats card-round">
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col-icon">
                             <div class="icon-big text-center icon-info bubble-shadow-small">
-                                <i class="fas fa-user-check"></i>
+                                <i class="fas fa-university fa-2x"></i>
                             </div>
                         </div>
                         <div class="col col-stats ms-3 ms-sm-0">
                             <div class="numbers">
-                                <p class="card-category">Total Petugas</p>
-                                <h4 class="card-title">{{ $totalPetugas }}</h4>
+                                <p class="card-category">Total Saldo Bank</p>
+                                <h4 class="card-title">Rp {{ number_format($totalSaldoBank, 0, ',', '.') }}</h4>
+
+
+                <!-- Keterangan kecil -->
+                <small class="d-block">Keuntungan Bank + Kas Masuk - Kas Keluar</small>
                             </div>
                         </div>
                     </div>
@@ -271,29 +274,9 @@
             </div>
         </div>
     </div>
+    
 </div>
-<div class="row mb-4">
-    <div class="col-md-4">
-        <div class="card text-white bg-primary shadow-sm">
-            <div class="card-body text-center">
-                <!-- Logo/Icon di atas judul -->
-                <div class="mb-2">
-                    <i class="fas fa-university fa-2x"></i> <!-- Contoh Font Awesome icon -->
-                </div>
 
-                <!-- Judul -->
-                <h5 class="card-title mb-2">Total Saldo Bank</h5>
-
-                <!-- Nominal -->
-                <h4 class="card-title">Rp {{ number_format($totalSaldoBank, 0, ',', '.') }}</h4>
-
-
-                <!-- Keterangan kecil -->
-                <small class="d-block">Kas Masuk + Keuntungan Bank - Kas Keluar</small>
-            </div>
-        </div>
-    </div>
-</div>
 
     </div>
 
@@ -314,7 +297,7 @@
     <div class="col-md-6 mb-4">
         <div class="card shadow-sm">
             <div class="card-header">
-                <h5 class="card-title mb-0">Kas Masuk per Bulan</h5>
+                <h5 class="card-title mb-0">Kas Masuk vs Keluar per Bulan</h5>
             </div>
             <div class="card-body">
                 <canvas id="kasChart"></canvas>

@@ -14,12 +14,23 @@
                 Anda dapat mengelola semua transaksi, seperti mengedit, menghapus, dan lainnya.
             </h6>
         </div>
-        <div class="ms-md-auto py-2 py-md-0">
-            <div class="section-header-button">
-                <a href="{{ route('petugas.transaksi.create') }}" class="btn btn-primary btn-round">Tambah Setoran</a>
-            </div>
-        </div>
+        
     </div>
+
+    {{-- Form Pencarian --}}
+    <form action="{{ route('petugas.transaksi.index') }}" method="GET" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="search" class="form-control" placeholder="Cari nama, no HP, atau no registrasi"
+            value="{{ request('search') }}">
+        <button class="btn btn-primary" type="submit">
+            <i class="fas fa-search"></i> Cari
+        </button>
+    </div>
+</form>
+
+
+
+
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -52,35 +63,43 @@
                                     <th>Nama Nasabah</th>
                                     <th>Berat (kg)</th>
                                     <th>Total (Rp)</th>
+                                    <th>Keuntungan 25%</th> {{-- Tambahan --}}
+        <th>Saldo Bersih Nasabah</th> {{-- Tambahan --}}
+
                                     <th style="width: 250px">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($transaksis as $index => $transaksi)
-                                    <tr>
-                                        <td>{{ $transaksis->firstItem() + $index }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($transaksi->tanggal_transaksi)->format('d-m-Y') }}</td>
-                                        <td>{{ $transaksi->nasabah->nama_lengkap }}</td>
-                                        <td>{{ number_format($transaksi->total_berat, 2, ',', '.') }}</td>
-                                        <td>Rp{{ number_format($transaksi->total_transaksi, 0, ',', '.') }}</td>
-                                        <td>
-                                            <a href="{{ route('petugas.transaksi.show', $transaksi->id) }}"
-                                                class="btn btn-sm btn-info me-2">
-                                                <i class="fas fa-info-circle"></i> Detail
-                                            </a>
-                                            <a href="{{ route('petugas.transaksi.print', $transaksi->id) }}"
-                                                class="btn btn-sm btn-primary me-2">
-                                                <i class="fas fa-print"></i> Cetak
-                                            </a>
-                                            {{-- <form onsubmit="return confirm('Apakah Anda yakin?');"
-                                                action="{{ route('petugas.transaksi.destroy', $transaksi->id) }}"
-                                                method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger">
-                                                    <i class="fa-solid fa-trash"></i> Hapus
-                                                </button>
-                                            </form> --}}
+                                    @php
+        $totalTransaksi = $transaksi->total_transaksi ?? $transaksi->detailTransaksi->sum('harga_total');
+        $keuntungan = $totalTransaksi * 0.25;
+        $saldoBersih = $totalTransaksi * 0.75;
+    @endphp
+    <tr>
+        <td>{{ $transaksis->firstItem() + $index }}</td>
+        <td>{{ \Carbon\Carbon::parse($transaksi->tanggal_transaksi)->format('d-m-Y') }}</td>
+        <td>{{ $transaksi->nasabah->nama_lengkap }}</td>
+        <td>{{ number_format($transaksi->total_berat, 2, ',', '.') }}</td>
+        <td>Rp{{ number_format($totalTransaksi, 0, ',', '.') }}</td>
+        <td>Rp{{ number_format($keuntungan, 0, ',', '.') }}</td> {{-- Tambahan --}}
+        <td>Rp{{ number_format($saldoBersih, 0, ',', '.') }}</td> {{-- Tambahan --}}
+        <td>
+
+                                            <div class="row row-cols-2 g-1">
+                                                <div class="col">
+                                                    <a href="{{ route('petugas.transaksi.show', $transaksi->id) }}" class="btn btn-sm btn-info w-100">
+                                                        <i class="fas fa-info-circle"></i> Detail
+                                                    </a>
+                                                </div>
+                                                
+                                                <div class="col">
+                                                    <a href="{{ route('petugas.transaksi.print', $transaksi->id) }}" class="btn btn-sm btn-secondary w-100">
+                                                        <i class="fas fa-print"></i> Cetak
+                                                    </a>
+                                                </div>
+                                                
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty
@@ -91,9 +110,9 @@
                                     </tr>
                                 @endforelse
                             </tbody>
-
                         </table>
                     </div>
+
                     <div class="float-right">
                         {{ $transaksis->withQueryString()->links() }}
                     </div>
@@ -101,10 +120,9 @@
             </div>
         </div>
     </div>
+    
 @endsection
 
 @push('scripts')
-    <!-- JS Libraies -->
-
-    <!-- Page Specific JS File -->
+    <!-- JS Libraries -->
 @endpush

@@ -17,17 +17,45 @@ use RealRashid\SweetAlert\Facades\Alert;
 class TransaksiController extends Controller
 {
 
-    public function index()
-    {
-        $transaksis = Transaksi::with(['nasabah', 'detailTransaksi.sampah'])->paginate(10);
+   public function index(Request $request)
+{
+    // Query dasar transaksi
+    $query = Transaksi::with(['nasabah', 'detailTransaksi.sampah']);
 
-        foreach ($transaksis as $transaksi) {
-            $transaksi->total_berat = $transaksi->detailTransaksi->sum('berat_kg');
-            $transaksi->total_transaksi = $transaksi->detailTransaksi->sum('harga_total');
-        }
-
-        return view('pages.petugas.transaksi.index', compact('transaksis'));
+    // Filter berdasarkan search jika ada
+    if ($request->has('search') && !empty($request->search)) {
+        $search = $request->search;
+        $query->whereHas('nasabah', function ($q) use ($search) {
+            $q->where('nama_lengkap', 'like', '%' . $search . '%')
+              ->orWhere('no_hp', 'like', '%' . $search . '%')
+              ->orWhere('no_registrasi', 'like', '%' . $search . '%');
+        });
     }
+
+    // Ambil data transaksi dengan pagination
+    $transaksis = $query->paginate(10)->withQueryString();
+
+    // Hitung total berat & total transaksi per transaksi
+    foreach ($transaksis as $transaksi) {
+        $transaksi->total_berat = $transaksi->detailTransaksi->sum('berat_kg');
+        $transaksi->total_transaksi = $transaksi->detailTransaksi->sum('harga_total');
+    }
+
+    // Ambil data keuntungan & saldo bersih per nasabah
+    $nasabahs = Nasabah::with(['transaksi.detailTransaksi'])->get()->map(function ($nasabah) {
+        $total = $nasabah->transaksi->flatMap->detailTransaksi->sum('harga_total');
+        return [
+            'nama' => $nasabah->nama_lengkap,
+            'keuntungan' => $total * 0.25,
+            'saldo_bersih' => $total * 0.75,
+        ];
+    });
+
+    // Kirim ke view
+    return view('pages.petugas.transaksi.index', compact('transaksis', 'nasabahs'));
+}
+
+
 
     public function generateUniqueTransactionCode()
     {
@@ -55,10 +83,7 @@ class TransaksiController extends Controller
 
     public function create()
     {
-        $kodeTransaksi = $this->generateUniqueTransactionCode();
-        $nasabahList = Nasabah::all();
-        $stokSampah = Sampah::all();
-        return view('pages.petugas.transaksi.create', compact('nasabahList', 'stokSampah', 'kodeTransaksi'));
+        
     }
 
     public function store(Request $request)
@@ -149,25 +174,6 @@ class TransaksiController extends Controller
         return view('pages.petugas.transaksi.show', compact('transaksi', 'detailTransaksi'));
     }
 
-    public function destroy($id)
-    {
-        // Cari transaksi beserta detailnya
-        $transaksi = Transaksi::with('detailTransaksi.sampah')->findOrFail($id);
 
-        // Lakukan penghapusan dalam satu proses
-        $transaksi->load('detailTransaksi.sampah'); // Pastikan data relasi dimuat
 
-        // Gunakan Eloquent untuk pengembalian stok
-        foreach ($transaksi->detailTransaksi as $detail) {
-            $detail->sampah->increment('stok_kg', $detail->berat_kg);
-        }
-
-        // Hapus detail transaksi dan transaksi utama
-        $transaksi->detailTransaksi()->delete(); // Hapus semua detail transaksi
-        $transaksi->delete(); // Hapus transaksi utama
-
-        Alert::success('Hore!', 'Transaksi berhasil dihapus!')->autoclose(3000);
-
-        return redirect()->route('petugas.transaksi.index');
-    }
 }

@@ -5,61 +5,146 @@ namespace App\Http\Controllers\Petugas;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Nasabah;
+use App\Models\Petugas;
+use App\Models\Sampah;
 use App\Models\DetailTransaksi;
 use App\Models\Transaksi;
-use Carbon\Carbon;
+use App\Models\Saldo;
+use App\Models\Artikel;
+use App\Models\Feedback;
+use App\Models\PencairanSaldo;
+use App\Models\PengirimanPengepul;
+use App\Models\DetailPengiriman;
+use Illuminate\Support\Facades\DB;
+use App\Models\Kas;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // Total Nasabah
+        // Statistik utama
         $totalNasabah = Nasabah::count();
+        $totalPetugas = Petugas::count();
+        $totalSampahTerkumpul = DetailTransaksi::sum('berat_kg');
+        $totalTransaksiSetoran = Transaksi::count();
+        $totalSaldoNasabah = Saldo::sum('saldo');
+        $totalPermintaanPencairan = PencairanSaldo::where('status', 'pending')->count();
+        $totalFeedbackMasuk = Feedback::count();
+        $totalArtikel = Artikel::count();
 
-        // Total Transaksi Hari Ini
-        $totalTransaksiHariIni = Transaksi::whereDate('tanggal_transaksi', Carbon::today())->count();
-
-        // Total Sampah (Kg) Hari Ini
-        $totalSampahHariIni = DetailTransaksi::whereHas('transaksi', function ($query) {
-            $query->whereDate('tanggal_transaksi', Carbon::today());
-        })->sum('berat_kg');
-
-        // Total Omzet Sampah Hari Ini
-        $totalOmzetHariIni = DetailTransaksi::whereHas('transaksi', function ($query) {
-            $query->whereDate('tanggal_transaksi', Carbon::today());
-        })->get()->sum(function ($detailTransaksi) {
-            return $detailTransaksi->berat_kg * $detailTransaksi->harga_per_kg;
-        });
-
-        $nasabahTerbaik = Nasabah::with(['transaksi' => function ($query) {
-            $query->withSum('detailTransaksi as total_sampah', 'berat_kg')
-                ->whereBetween('tanggal_transaksi', [
-                    Carbon::now()->subMonth()->startOfMonth(),
-                    Carbon::now()->subMonth()->endOfMonth()
-                ]);
-        }])
-            ->whereHas('transaksi.detailTransaksi', function ($query) {
-                $query->where('berat_kg', '>', 0);
-            })
-            ->withCount(['transaksi as total_setoran' => function ($query) {
-                $query->whereBetween('tanggal_transaksi', [
-                    Carbon::now()->subMonth()->startOfMonth(),
-                    Carbon::now()->subMonth()->endOfMonth()
-                ]);
-            }])
+        // Perhitungan stok
+        $totalStokSampah = Sampah::with(['detailTransaksi', 'detailPengiriman'])
             ->get()
-            ->sortByDesc(function ($nasabah) {
-                return $nasabah->transaksi->sum('detailTransaksi.berat_kg');
-            })->take(10);
+            ->sum(function ($sampah) {
+                return $sampah->detailTransaksi->sum('berat_kg') - $sampah->detailPengiriman->sum('berat_kg');
+            });
+
+        $totalSampahTerkirim = DetailPengiriman::sum('berat_kg');
+
+        // Keuntungan dari saldo
+        $totalKeuntungan = Saldo::select(DB::raw('SUM(saldo * 0.25) as keuntungan'))->value('keuntungan');
+        $totalSaldoBersih = Saldo::sum(DB::raw('saldo * 0.75'));
+
+        // Total Kas Masuk & Keluar
+        $totalKasMasuk = Kas::where('jenis', 'masuk')->sum('nominal');
+        $totalKasKeluar = Kas::where('jenis', 'keluar')->sum('nominal');
+
+        // Total Saldo Bank
+        $totalSaldoBank = $totalKasMasuk + $totalKeuntungan - $totalKasKeluar;
+
+        // Nasabah terbaik
+        $nasabahTerbaik = Nasabah::withCount(['transaksi as total_setoran' => function ($query) {
+            $query->where('tanggal_transaksi', '>=', now()->subMonth());
+        }])->orderBy('total_setoran', 'desc')->take(10)->get();
+
+        // Data chart
+        $bulan = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+        $transaksiPerBulan = [];
+        $kasMasukPerBulan = [];
+        $kasKeluarPerBulan = [];
+        $sampahMasukPerBulan = [];
+        $sampahTerkirimPerBulan = [];
+        $saldoBersihPerBulan = [];
+        $tahunIni = date('Y');
+
+        foreach (range(1, 12) as $month) {
+            // Jumlah transaksi
+            $transaksiPerBulan[] = Transaksi::whereMonth('created_at', $month)
+                ->whereYear('created_at', $tahunIni)
+                ->count();
+
+            // Kas masuk & keluar per bulan
+            $kasMasukBulan = Kas::where('jenis','masuk')
+                ->whereMonth('created_at',$month)
+                ->whereYear('created_at', $tahunIni)
+                ->sum('nominal');
 
 
-        // Kirim data ke view
+            $kasKeluarBulan = Kas::where('jenis','keluar')
+                ->whereMonth('created_at',$month)
+                ->whereYear('created_at', $tahunIni)
+                ->sum('nominal');
+
+            $kasMasukPerBulan[] = $kasMasukBulan;
+            $kasKeluarPerBulan[] = $kasKeluarBulan;
+
+            // Sampah masuk & terkirim
+            $sampahMasukPerBulan[] = DetailTransaksi::whereMonth('created_at',$month)
+                ->whereYear('created_at', $tahunIni)
+                ->sum('berat_kg');
+
+            $sampahTerkirimPerBulan[] = DetailPengiriman::whereMonth('created_at',$month)
+                ->whereYear('created_at', $tahunIni)
+                ->sum('berat_kg');
+$nasabahAktifPerBulan = [];
+$nasabahTidakAktifPerBulan = [];
+
+foreach (range(1, 12) as $month) {
+    $nasabahAktifPerBulan[] = Nasabah::where('status', 'aktif')
+        ->whereMonth('created_at', $month)
+        ->whereYear('created_at', $tahunIni)
+        ->count();
+
+    $nasabahTidakAktifPerBulan[] = Nasabah::where('status', '!=', 'aktif')
+        ->whereMonth('created_at', $month)
+        ->whereYear('created_at', $tahunIni)
+        ->count();
+}
+
+            // Saldo bersih per bulan (non-kumulatif)
+            $keuntunganBulan = Saldo::whereMonth('created_at',$month)
+                ->whereYear('created_at', $tahunIni)
+                ->sum(DB::raw('saldo * 0.25'));
+
+            $saldoBersihPerBulan[] = $kasMasukBulan + $keuntunganBulan - $kasKeluarBulan;
+        }
+
         return view('pages.petugas.dashboard', compact(
             'totalNasabah',
-            'totalTransaksiHariIni',
-            'totalSampahHariIni',
-            'totalOmzetHariIni',
-            'nasabahTerbaik'
+            'totalPetugas',
+            'totalSampahTerkumpul',
+            'totalTransaksiSetoran',
+            'totalSaldoNasabah',
+            'totalPermintaanPencairan',
+            'totalFeedbackMasuk',
+            'totalArtikel',
+            'totalStokSampah',
+            'totalSampahTerkirim',
+            'totalKeuntungan',
+            'totalSaldoBersih',
+            'totalSaldoBank',
+            'nasabahTerbaik',
+            'bulan',
+            'transaksiPerBulan',
+            'kasMasukPerBulan',
+            'kasKeluarPerBulan',
+            'sampahMasukPerBulan',
+            'sampahTerkirimPerBulan',
+            'saldoBersihPerBulan',
+            'nasabahAktifPerBulan',
+    'nasabahTidakAktifPerBulan'
+
+
         ));
     }
 }

@@ -5,7 +5,7 @@ use App\Http\Controllers\AuthController;
 
 // Admin Controller
 use App\Http\Controllers\Admin\NasabahController as AdminNasabahController;
-use App\Http\Controllers\Admin\PetugasController as AdminPetugasController;
+
 use App\Http\Controllers\Admin\SampahController as AdminSampahController;
 use App\Http\Controllers\Admin\PengepulController as AdminPengepulController;
 use App\Http\Controllers\Admin\BannerController as AdminBannerController;
@@ -26,6 +26,8 @@ use App\Http\Controllers\ArtikelController;
 use App\Http\Controllers\Petugas\DashboardController as PetugasDashboardController;
 use App\Http\Controllers\Petugas\TransaksiController as PetugasTransaksiController;
 use App\Http\Controllers\Petugas\NasabahController as PetugasNasabahController;
+use App\Http\Controllers\Petugas\PetugasController as PetugasPetugasController;
+
 
 use Illuminate\Http\Request;
 use App\Models\Sampah;
@@ -82,7 +84,7 @@ Route::post('nasabah/{id}/tarik-saldo', [AdminNasabahController::class, 'tarikSa
 
     // Data Master
     Route::resource('/data-nasabah', AdminNasabahController::class)->names('admin.nasabah');
-    Route::resource('/data-petugas', AdminPetugasController::class)->names('admin.petugas');
+   
     Route::resource('/data-sampah', AdminSampahController::class)->names('admin.sampah');
     Route::resource('/data-pengepul', AdminPengepulController::class)->names('admin.pengepul');
 
@@ -143,6 +145,8 @@ Route::post('/pencairan-saldo/tolak/{id}', [AdminTarikSaldoController::class, 't
 Route::middleware(['auth', 'checkRole:petugas'])->prefix('petugas')->group(function () {
     Route::get('/dashboard', [PetugasDashboardController::class, 'index'])->name('petugas.dashboard');
     Route::resource('/data-nasabah', PetugasNasabahController::class)->names('petugas.nasabah');
+    Route::resource('/data-petugas', PetugasPetugasController::class)->names('petugas.petugas');
+
     Route::resource('/transaksi', PetugasTransaksiController::class)->names('petugas.transaksi');
     Route::get('/transaksi/print/{transaksi}', [PetugasTransaksiController::class, 'print'])->name('petugas.transaksi.print');
 });

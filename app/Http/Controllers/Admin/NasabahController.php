@@ -18,12 +18,17 @@ class NasabahController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+   public function index(Request $request)
 {
-    $query = Nasabah::query();
+    $query = Nasabah::with('saldo');
 
-    if ($request->filled('nama_nasabah')) {
-        $query->where('nama_lengkap', 'like', '%' . $request->nama_nasabah . '%');
+    if ($request->filled('keyword')) {
+        $keyword = $request->keyword;
+        $query->where(function ($q) use ($keyword) {
+            $q->where('nama_lengkap', 'like', '%' . $keyword . '%')
+              ->orWhere('no_registrasi', 'like', '%' . $keyword . '%')
+              ->orWhere('no_hp', 'like', '%' . $keyword . '%');
+        });
     }
 
     $nasabahs = $query->paginate(10);
@@ -37,9 +42,10 @@ class NasabahController extends Controller
      */
     public function create()
     {
-        $tanggal = Carbon::now()->format('YmdHis');
-        $randomNumber = Str::padLeft(mt_rand(0, 9999), 4, '0');
-        $nomorRegistrasi = "NSB-{$tanggal}-{$randomNumber}";
+        $lastNasabah = Nasabah::latest('id')->first();
+$nextNumber = $lastNasabah ? $lastNasabah->id + 1 : 1;
+$nomorRegistrasi = "REG" . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+
 
         return view('pages.admin.nasabah.create', compact('nomorRegistrasi'));
     }
@@ -47,21 +53,22 @@ class NasabahController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'no_registrasi' => 'required|unique:nasabah,no_registrasi',
-            'nama_lengkap' => 'required|string|max:255',
-            'alamat_lengkap' => 'required|string',
-            'no_hp' => 'required|string|max:15',
-            'nik' => 'required|digits:16|unique:nasabah,nik',
-            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
-            'tempat_lahir' => 'required|string|max:100',
-            'tanggal_lahir' => 'required|date',
-            'email' => 'required|email', // Mengizinkan email yang sama
-            'username' => 'required|string|unique:nasabah,username|max:255',
-            'password' => 'required|string|min:8',
-        ]);
+   public function store(Request $request)
+{
+    try {
+       $request->validate([
+    'no_registrasi' => 'required|unique:nasabah,no_registrasi',
+    'nama_lengkap' => 'required|string|max:255|unique:nasabah,nama_lengkap',
+    'alamat_lengkap' => 'required|string',
+    'no_hp' => 'required|string|max:15',
+    'nik' => 'required|digits:16|unique:nasabah,nik',
+    'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+    'tempat_lahir' => 'required|string|max:100',
+    'tanggal_lahir' => 'required|date',
+    'email' => 'required|email',
+    'username' => 'required|string|unique:nasabah,username|max:255',
+    'password' => 'required|string|min:8',
+]);
 
         $nasabah = Nasabah::create([
             'nama_lengkap' => $request->nama_lengkap,
@@ -72,7 +79,7 @@ class NasabahController extends Controller
             'jenis_kelamin' => $request->jenis_kelamin,
             'tempat_lahir' => $request->tempat_lahir,
             'tanggal_lahir' => $request->tanggal_lahir,
-            'email' => $request->email, // Email tidak perlu unik
+            'email' => $request->email,
             'username' => $request->username,
             'status' => $request->status ?? 'aktif',
             'password' => Hash::make($request->password),
@@ -85,8 +92,12 @@ class NasabahController extends Controller
 
         Alert::success('Berhasil!', 'Nasabah berhasil ditambahkan!')->autoclose(3000);
         return redirect()->route('admin.nasabah.index');
-    }
 
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        Alert::error('Gagal!', 'Data duplikat atau tidak valid!')->autoclose(4000);
+        return redirect()->back()->withErrors($e->errors())->withInput();
+    }
+}
 
 
     /**
@@ -128,23 +139,24 @@ class NasabahController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
-    {
-        $nasabah = Nasabah::findOrFail($id);
+{
+    $nasabah = Nasabah::findOrFail($id);
 
-        $request->validate([
-            'no_registrasi' => 'required|unique:nasabah,no_registrasi,' . $nasabah->id,
-            'nama_lengkap' => 'required|string|max:255',
-            'alamat_lengkap' => 'required|string',
-            'no_hp' => 'required|string|max:15',
-            'nik' => 'required|digits:16|unique:nasabah,nik,' . $nasabah->id,
-            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
-            'tempat_lahir' => 'required|string|max:100',
-            'tanggal_lahir' => 'required|date',
-            'email' => 'required|email',
-            'username' => 'required|string|unique:nasabah,username,' . $nasabah->id . '|max:255',
-            'password' => 'nullable|string|min:8',
-            'status' => 'required|in:aktif,tidak_aktif',
-        ]);
+    try {
+       $request->validate([
+    'no_registrasi' => 'required|unique:nasabah,no_registrasi,' . $nasabah->id,
+    'nama_lengkap' => 'required|string|max:255|unique:nasabah,nama_lengkap,' . $nasabah->id,
+    'alamat_lengkap' => 'required|string',
+    'no_hp' => 'required|string|max:15',
+    'nik' => 'required|digits:16|unique:nasabah,nik,' . $nasabah->id,
+    'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+    'tempat_lahir' => 'required|string|max:100',
+    'tanggal_lahir' => 'required|date',
+    'email' => 'required|email',
+    'username' => 'required|string|unique:nasabah,username,' . $nasabah->id . '|max:255',
+    'password' => 'nullable|string|min:8',
+    'status' => 'required|in:aktif,tidak_aktif',
+]);
 
         $nasabah->update([
             'no_registrasi' => $request->no_registrasi,
@@ -167,7 +179,12 @@ class NasabahController extends Controller
 
         Alert::success('Berhasil!', 'Nasabah berhasil diperbarui!')->autoclose(3000);
         return redirect()->route('admin.nasabah.index');
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        Alert::error('Gagal!', 'Data duplikat atau tidak valid!')->autoclose(4000);
+        return redirect()->back()->withErrors($e->errors())->withInput();
     }
+}
 
 
     /**

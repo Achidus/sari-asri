@@ -9,14 +9,14 @@
 @section('main')
     <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
         <div>
-            <h3 class="fw-bold mb-3">Manajemen Aplikasi</h3>
+            <h3 class="fw-bold mb-3">Data Login</h3>
             <h6 class="op-7 mb-2">
-                Di sini, Anda dapat mengelola versi aplikasi Android untuk bank sampah.
+                Di sini, Anda dapat mengelola Siapa Saja yang bisa Login.
             </h6>
         </div>
         <div class="ms-md-auto py-2 py-md-0">
             <div class="section-header-button">
-                <a href="{{ route('admin.petugas.create') }}" class="btn btn-primary btn-round">Tambah Petugas</a>
+                <a href="{{ route('petugas.petugas.create') }}" class="btn btn-primary btn-round">Tambah Petugas</a>
             </div>
         </div>
     </div>
@@ -48,8 +48,8 @@
                                         <td>{{ ucfirst($pet->role) }}</td>
                                         <td>
                                             <form onsubmit="return confirm('Apakah Anda yakin?');"
-                                                action="{{ route('admin.petugas.destroy', $pet->id) }}" method="POST">
-                                                <a href="{{ route('admin.petugas.edit', $pet->id) }}"
+                                                action="{{ route('petugas.petugas.destroy', $pet->id) }}" method="POST">
+                                                <a href="{{ route('petugas.petugas.edit', $pet->id) }}"
                                                     class="btn btn-sm btn-primary">
                                                     <i class="fas fa-pencil-alt"></i> Edit
                                                 </a>
