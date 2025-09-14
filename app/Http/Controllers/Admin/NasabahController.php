@@ -12,6 +12,9 @@ use RealRashid\SweetAlert\Facades\Alert;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Setting;
+use App\Models\Permission;
+
 
 class NasabahController extends Controller
 {
@@ -141,36 +144,36 @@ $nomorRegistrasi = "REG" . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
     public function update(Request $request, $id)
 {
     $nasabah = Nasabah::findOrFail($id);
+    $setting = Setting::first();
+
+    if ($setting && $setting->require_permission) {
+        Permission::create([
+            'admin_id'   => auth()->id(),
+            'action'     => 'update',
+            'table_name' => 'nasabah',
+            'record_id'  => $nasabah->id,
+        ]);
+
+        return back()->with('info', 'Permintaan update nasabah dikirim ke petugas untuk persetujuan.');
+    }
 
     try {
-       $request->validate([
-    'no_registrasi' => 'required|unique:nasabah,no_registrasi,' . $nasabah->id,
-    'nama_lengkap' => 'required|string|max:255|unique:nasabah,nama_lengkap,' . $nasabah->id,
-    'alamat_lengkap' => 'required|string',
-    'no_hp' => 'required|string|max:15',
-    'nik' => 'required|digits:16|unique:nasabah,nik,' . $nasabah->id,
-    'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
-    'tempat_lahir' => 'required|string|max:100',
-    'tanggal_lahir' => 'required|date',
-    'email' => 'required|email',
-    'username' => 'required|string|unique:nasabah,username,' . $nasabah->id . '|max:255',
-    'password' => 'nullable|string|min:8',
-    'status' => 'required|in:aktif,tidak_aktif',
-]);
-
-        $nasabah->update([
-            'no_registrasi' => $request->no_registrasi,
-            'nama_lengkap' => $request->nama_lengkap,
-            'alamat_lengkap' => $request->alamat_lengkap,
-            'no_hp' => $request->no_hp,
-            'nik' => $request->nik,
-            'jenis_kelamin' => $request->jenis_kelamin,
-            'tempat_lahir' => $request->tempat_lahir,
-            'tanggal_lahir' => $request->tanggal_lahir,
-            'email' => $request->email,
-            'username' => $request->username,
-            'status' => $request->status,
+        $request->validate([
+            'no_registrasi' => 'required|unique:nasabah,no_registrasi,' . $nasabah->id,
+            'nama_lengkap' => 'required|string|max:255|unique:nasabah,nama_lengkap,' . $nasabah->id,
+            'alamat_lengkap' => 'required|string',
+            'no_hp' => 'required|string|max:15',
+            'nik' => 'required|digits:16|unique:nasabah,nik,' . $nasabah->id,
+            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+            'tempat_lahir' => 'required|string|max:100',
+            'tanggal_lahir' => 'required|date',
+            'email' => 'required|email',
+            'username' => 'required|string|unique:nasabah,username,' . $nasabah->id . '|max:255',
+            'password' => 'nullable|string|min:8',
+            'status' => 'required|in:aktif,tidak_aktif',
         ]);
+
+        $nasabah->update($request->except('password'));
 
         if ($request->filled('password')) {
             $nasabah->password = Hash::make($request->password);
@@ -190,13 +193,26 @@ $nomorRegistrasi = "REG" . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+   public function destroy($id)
 {
     $nasabah = Nasabah::findOrFail($id);
+    $setting = Setting::first();
+
+    if ($setting && $setting->require_permission) {
+        Permission::create([
+            'admin_id'   => auth()->id(),
+            'action'     => 'delete',
+            'table_name' => 'nasabah',
+            'record_id'  => $nasabah->id,
+        ]);
+
+        return back()->with('info', 'Permintaan hapus nasabah dikirim ke petugas untuk persetujuan.');
+    }
+
     $nasabah->delete();
 
     Alert::success('Berhasil!', 'Nasabah berhasil dihapus!')->autoclose(3000);
-        return redirect()->route('admin.nasabah.index');
+    return redirect()->route('admin.nasabah.index');
 }
 
 public function tarikSaldoForm($id)

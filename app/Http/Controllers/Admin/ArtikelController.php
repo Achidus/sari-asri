@@ -160,4 +160,5 @@ class ArtikelController extends Controller
 }
 
 
+
 }

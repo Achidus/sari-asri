@@ -48,18 +48,22 @@
             <tbody>
                 @forelse($kas as $item)
                 <tr>
-                    <td>{{ $loop->iteration }}</td>
+                   <td>{{ $kas->firstItem() + $loop->index }}</td>
+
                     <td>{{ $item->tanggal ? $item->tanggal->format('d-m-Y') : '-' }}</td>
                     <td>{{ $item->sumber_dana }}</td>
                     <td>{{ $item->keterangan }}</td>
                     <td>Rp{{ number_format($item->nominal, 0, ',', '.') }}</td>
                     <td>
                         <a href="{{ route('admin.kas.edit', $item->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                        <form action="{{ route('admin.kas.destroy', $item->id) }}" method="POST" style="display:inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-sm btn-danger" onclick="return confirm('Hapus data?')">Hapus</button>
-                        </form>
+                       <form action="{{ route('admin.kas.destroy', $item->id) }}" method="POST" style="display:inline;">
+    @csrf
+    @method('DELETE')
+    <input type="hidden" name="row_number" value="{{ $kas->firstItem() + $loop->index }}">
+    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Hapus data?')">Hapus</button>
+</form>
+
+
                     </td>
                 </tr>
                 @empty

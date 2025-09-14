@@ -27,6 +27,7 @@ use App\Http\Controllers\Petugas\DashboardController as PetugasDashboardControll
 use App\Http\Controllers\Petugas\TransaksiController as PetugasTransaksiController;
 use App\Http\Controllers\Petugas\NasabahController as PetugasNasabahController;
 use App\Http\Controllers\Petugas\PetugasController as PetugasPetugasController;
+use App\Http\Controllers\Petugas\PermissionController; 
 
 
 use Illuminate\Http\Request;
@@ -35,6 +36,7 @@ use App\Models\Nasabah;
 use App\Models\Artikel;
 use App\Models\PengirimanPengepul;
 use App\Http\Controllers\FeedbackController;
+use App\Models\Banner; 
 
 
 /*
@@ -59,7 +61,10 @@ Route::get('/', function (Request $request) {
 
     $artikels = Artikel::latest()->paginate(6);
 
-    return view('welcome', compact('sampahs','nasabahs','artikels'));
+    // ✅ Ambil banner aktif
+    $banners = Banner::where('status', 'aktif')->get();
+
+    return view('welcome', compact('sampahs','nasabahs','artikels','banners'));
 })->name('welcome');
 
 // Halaman daftar artikel publik
@@ -67,6 +72,7 @@ Route::get('/berita', [ArtikelController::class, 'index'])->name('artikel.index'
 
 // Halaman detail artikel publik (per slug)
 Route::get('/artikel/{slug}', [ArtikelController::class, 'show'])->name('artikel.show');
+Route::delete('/artikel/{id}', [ArtikelController::class, 'destroy'])->name('admin.artikel.destroy');
 
 // Auth
 Route::middleware('guest')->group(function () {
@@ -149,7 +155,14 @@ Route::middleware(['auth', 'checkRole:petugas'])->prefix('petugas')->group(funct
 
     Route::resource('/transaksi', PetugasTransaksiController::class)->names('petugas.transaksi');
     Route::get('/transaksi/print/{transaksi}', [PetugasTransaksiController::class, 'print'])->name('petugas.transaksi.print');
+
+    Route::get('/permissions', [PermissionController::class, 'index'])->name('petugas.permissions.index');
+    Route::post('/permissions/{id}/approve', [PermissionController::class, 'approve'])->name('petugas.permissions.approve');
+    Route::post('/permissions/{id}/reject', [PermissionController::class, 'reject'])->name('petugas.permissions.reject');
+    Route::post('/toggle-permission', [PermissionController::class, 'toggle'])->name('petugas.toggle-permission');
+
 });
+Route::get('/banner', [\App\Http\Controllers\FrontendBannerController::class, 'index'])->name('frontend.banner');
 
 // Logout
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');

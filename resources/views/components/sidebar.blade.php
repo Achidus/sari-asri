@@ -140,43 +140,52 @@
                 @endif
 
                 @if (auth()->user()->role == 'petugas')
-                    <!-- Dashboard Petugas -->
-                    <li class="nav-item">
-                        <a href="{{ route('petugas.dashboard') }}">
-                            <i class="fas fa-home"></i>
-                            <p>Dashboard</p>
-                        </a>
-                    </li>
+    <!-- Dashboard Petugas -->
+    <li class="nav-item">
+        <a href="{{ route('petugas.dashboard') }}">
+            <i class="fas fa-home"></i>
+            <p>Dashboard</p>
+        </a>
+    </li>
 
-                    <!-- Data Master Petugas -->
-                    <li class="nav-item">
-                        <a data-bs-toggle="collapse" href="#data-master" class="collapsed" aria-expanded="false">
-                            <i class="fas fa-database"></i>
-                            <p>Data Master</p>
-                            <span class="caret"></span>
-                        </a>
-                        <div class="collapse" id="data-master">
-                            <ul class="nav nav-collapse">
-                                <li><a href="{{ route('petugas.nasabah.index') }}"><span class="sub-item">Data Nasabah</span></a></li>
-                                <li><a href="{{ route('petugas.petugas.index') }}"><span class="sub-item">Data Petugas</span></a></li>
-                            </ul>
-                        </div>
-                    </li>
+    <!-- Data Master Petugas -->
+    <li class="nav-item">
+        <a data-bs-toggle="collapse" href="#data-master" class="collapsed" aria-expanded="false">
+            <i class="fas fa-database"></i>
+            <p>Data Master</p>
+            <span class="caret"></span>
+        </a>
+        <div class="collapse" id="data-master">
+            <ul class="nav nav-collapse">
+                <li><a href="{{ route('petugas.nasabah.index') }}"><span class="sub-item">Data Nasabah</span></a></li>
+                <li><a href="{{ route('petugas.petugas.index') }}"><span class="sub-item">Data Petugas</span></a></li>
+            </ul>
+        </div>
+    </li>
 
-                    <!-- Transaksi Petugas -->
-                    <li class="nav-item">
-                        <a data-bs-toggle="collapse" href="#transaksi" class="collapsed" aria-expanded="false">
-                            <i class="fas fa-money-bill-wave"></i>
-                            <p>Transaksi</p>
-                            <span class="caret"></span>
-                        </a>
-                        <div class="collapse" id="transaksi">
-                            <ul class="nav nav-collapse">
-                                <li><a href="{{ route('petugas.transaksi.index') }}"><span class="sub-item">Transaksi Setoran</span></a></li>
-                            </ul>
-                        </div>
-                    </li>
-                @endif
+    <!-- Transaksi Petugas -->
+    <li class="nav-item">
+        <a data-bs-toggle="collapse" href="#transaksi" class="collapsed" aria-expanded="false">
+            <i class="fas fa-money-bill-wave"></i>
+            <p>Transaksi</p>
+            <span class="caret"></span>
+        </a>
+        <div class="collapse" id="transaksi">
+            <ul class="nav nav-collapse">
+                <li><a href="{{ route('petugas.transaksi.index') }}"><span class="sub-item">Transaksi Setoran</span></a></li>
+            </ul>
+        </div>
+    </li>
+
+    <!-- Kontrol Admin -->
+    <li class="nav-item">
+        <a href="{{ route('petugas.permissions.index') }}">
+            <i class="fas fa-user-shield"></i>
+            <p>Kontrol Admin</p>
+        </a>
+    </li>
+@endif
+
 
                 <!-- Logout -->
                 <li class="nav-item">

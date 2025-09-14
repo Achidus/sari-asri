@@ -26,7 +26,7 @@ class BannerController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'nama_banner' => 'required|string|max:255',
-            'file_banner' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048|dimensions:min_width=200,min_height=200,max_width=2000,max_height=2000',
+            'file_banner' => 'required|image|mimes:jpeg,png,jpg,gif|max:4096|dimensions:min_width=100,min_height=100',
             'status' => 'required|in:aktif,tidak_aktif',
         ], [
             'dimensions' => 'The :attribute must have a minimum width and height of 200 pixels and a maximum width and height of 2000 pixels.',

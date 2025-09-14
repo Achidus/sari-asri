@@ -379,6 +379,30 @@
     from { opacity: 0; transform: translateY(15px); }
     to   { opacity: 1; transform: translateY(0); }
 }
+.banner-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);   /* 3 kolom */
+    grid-template-rows: repeat(2, 250px);    /* 2 baris */
+  }
+
+  .banner-item img,
+  .empty-slot {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .empty-slot {
+    background: #fff; /* biar kelihatan bolong putih */
+  }
+
+  @media (max-width: 768px) {
+    .banner-grid {
+      grid-template-columns: 1fr 1fr;
+      grid-auto-rows: 200px;
+    }
+    .empty-slot { display: none; }
+  }
 
 </style>
 
@@ -489,6 +513,27 @@
   </div>
 </section>
 
+
+{{-- Banner Galeri --}}
+@if($banners->count())
+<section id="banner" class="bg-white py-5">
+  <div class="container-fluid px-0"> {{-- pakai fluid biar full --}}
+    <div class="banner-grid">
+      @foreach($banners as $index => $banner)
+        {{-- Kosongkan slot tengah (index ke-4 → baris 2 kolom 2) --}}
+        @if($index === 4)
+          <div class="empty-slot"></div>
+        @endif
+
+        <div class="banner-item">
+          <img src="{{ asset('storage/banners/' . $banner->file_banner) }}"
+               alt="{{ $banner->nama_banner }}">
+        </div>
+      @endforeach
+    </div>
+  </div>
+</section>
+@endif
 
 
 
