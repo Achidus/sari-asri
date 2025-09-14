@@ -196,55 +196,44 @@ public function update(Request $request, $id)
         'detail_transaksi.*.harga_per_kg' => 'required|numeric|min:0',
     ]);
 
-    $transaksi = Transaksi::findOrFail($id);
-    $transaksi->update([
+    \App\Models\Permission::create([
+    'admin_id'   => auth()->id(),
+    'table_name' => 'transaksi_setoran',
+    'record_id'  => $id,
+    'action'     => 'update',
+    'payload'    => json_encode([
         'nasabah_id' => $request->nasabah_id,
         'tanggal_transaksi' => $request->tanggal_transaksi,
-    ]);
+        'detail_transaksi' => array_map(function($d) {
+            // pastikan setiap detail punya kunci yang kita pakai saat approve
+            $hargaTotal = ($d['berat_kg'] ?? 0) * ($d['harga_per_kg'] ?? 0);
+            return [
+                'sampah_id' => $d['sampah_id'],
+                'berat_kg' => $d['berat_kg'],
+                'harga_per_kg' => $d['harga_per_kg'],
+                'harga_total' => $hargaTotal,
+            ];
+        }, $request->detail_transaksi),
+    ]),
+]);
 
-    // Hapus detail lama
-    $transaksi->detailTransaksi()->delete();
 
-    // Tambah detail baru
-    $totalTransaksi = 0;
-    foreach ($request->detail_transaksi as $detail) {
-        $hargaTotal = $detail['berat_kg'] * $detail['harga_per_kg'];
-        $totalTransaksi += $hargaTotal;
-
-        DetailTransaksi::create([
-            'transaksi_id' => $transaksi->id,
-            'sampah_id' => $detail['sampah_id'],
-            'berat_kg' => $detail['berat_kg'],
-            'harga_per_kg' => $detail['harga_per_kg'],
-            'harga_total' => $hargaTotal,
-        ]);
-    }
-
-    // Update saldo bisa ditambahkan jika perlu
-
-    Alert::success('Sukses!', 'Transaksi berhasil diperbarui!')->autoclose(3000);
+    Alert::info('Menunggu Persetujuan', 'Update transaksi setoran akan diproses setelah disetujui petugas.')->autoclose(4000);
     return redirect()->route('admin.transaksi.index');
 }
 
-    public function destroy($id)
-    {
-        // Cari transaksi beserta detailnya
-        $transaksi = Transaksi::with('detailTransaksi.sampah')->findOrFail($id);
+public function destroy($id)
+{
+    \App\Models\Permission::create([
+        'admin_id'   => auth()->id(),
+        'table_name' => 'transaksi_setoran', // 👈 lebih spesifik
+        'record_id'  => $id,
+        'action'     => 'delete',
+    ]);
 
-        // Lakukan penghapusan dalam satu proses
-        $transaksi->load('detailTransaksi.sampah'); // Pastikan data relasi dimuat
+    Alert::info('Menunggu Persetujuan', 'Penghapusan transaksi setoran akan diproses setelah disetujui petugas.')->autoclose(4000);
+    return redirect()->route('admin.transaksi.index');
+}
 
-        // Gunakan Eloquent untuk pengembalian stok
-        foreach ($transaksi->detailTransaksi as $detail) {
-            $detail->sampah->increment('stok_kg', $detail->berat_kg);
-        }
 
-        // Hapus detail transaksi dan transaksi utama
-        $transaksi->detailTransaksi()->delete(); // Hapus semua detail transaksi
-        $transaksi->delete(); // Hapus transaksi utama
-
-        Alert::success('Hore!', 'Transaksi berhasil dihapus!')->autoclose(3000);
-
-        return redirect()->route('admin.transaksi.index');
-    }
 }
