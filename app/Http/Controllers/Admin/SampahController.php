@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
-
+use App\Services\PermissionService;
 
 class SampahController extends Controller
 {
@@ -26,48 +26,53 @@ class SampahController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_sampah' => 'required|string|max:255',
-            'harga_per_kg' => 'required|numeric',
-            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'nama_sampah'   => 'required|string|max:255',
+            'harga_per_kg'  => 'required|numeric',
+            'gambar'        => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $sampah = new Sampah($request->only('nama_sampah', 'harga_per_kg'));
+        $payload = $request->only('nama_sampah', 'harga_per_kg');
 
         if ($request->hasFile('gambar')) {
             $fileName = Str::random(40) . '.' . $request->file('gambar')->getClientOriginalExtension();
             $request->file('gambar')->storeAs('public/sampah', $fileName);
-            $sampah->gambar = $fileName;
+            $payload['gambar'] = $fileName;
         }
 
-        $sampah->save();
+        $ok = PermissionService::requestOrExecute(
+            'create',
+            'sampah',
+            null,
+            $payload,
+            fn() => Sampah::create($payload)
+        );
+
+        if (!$ok) {
+            Alert::info('Menunggu Persetujuan', 'Penambahan sampah menunggu persetujuan petugas.');
+            return back();
+        }
+
         Alert::success('Hore!', 'Data sampah berhasil ditambahkan!')->autoclose(3000);
         return redirect()->route('admin.sampah.index');
-    }
-
-
-    public function show(Sampah $sampah)
-    {
     }
 
     public function edit(string $id)
     {
         $sampah = Sampah::findOrFail($id);
-
         return view('pages.admin.sampah.edit', compact('sampah'));
     }
-
 
     public function update(Request $request, string $id)
     {
         $sampah = Sampah::findOrFail($id);
 
         $request->validate([
-            'nama_sampah' => 'required|string|max:255',
-            'harga_per_kg' => 'required|numeric',
-            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'nama_sampah'   => 'required|string|max:255',
+            'harga_per_kg'  => 'required|numeric',
+            'gambar'        => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $sampah->fill($request->only('nama_sampah', 'harga_per_kg'));
+        $payload = $request->only('nama_sampah', 'harga_per_kg');
 
         if ($request->hasFile('gambar')) {
             if ($sampah->gambar) {
@@ -75,29 +80,49 @@ class SampahController extends Controller
             }
             $fileName = Str::random(40) . '.' . $request->file('gambar')->getClientOriginalExtension();
             $request->file('gambar')->storeAs('public/sampah', $fileName);
-            $sampah->gambar = $fileName;
+            $payload['gambar'] = $fileName;
         }
 
-        $sampah->save();
+        $ok = PermissionService::requestOrExecute(
+            'update',
+            'sampah',
+            $sampah->id,
+            $payload,
+            fn() => $sampah->update($payload)
+        );
+
+        if (!$ok) {
+            Alert::info('Menunggu Persetujuan', 'Update data sampah menunggu persetujuan petugas.');
+            return back();
+        }
+
         Alert::success('Berhasil!', 'Data sampah berhasil diperbarui.')->autoclose(3000);
         return redirect()->route('admin.sampah.index');
     }
 
-
-
     public function destroy($id)
-{
-    $sampah = Sampah::findOrFail($id);
+    {
+        $sampah = Sampah::findOrFail($id);
 
-    if ($sampah->gambar) {
-    Storage::delete('public/sampah/' . $sampah->gambar);
-}
+        $ok = PermissionService::requestOrExecute(
+            'delete',
+            'sampah',
+            $sampah->id,
+            null,
+            function () use ($sampah) {
+                if ($sampah->gambar) {
+                    Storage::delete('public/sampah/' . $sampah->gambar);
+                }
+                $sampah->delete();
+            }
+        );
 
+        if (!$ok) {
+            Alert::info('Menunggu Persetujuan', 'Penghapusan sampah menunggu persetujuan petugas.');
+            return back();
+        }
 
-    $sampah->delete();
-
-    Alert::success('Sukses!', 'Sampah berhasil dihapus!')->autoclose(3000);
-    return redirect()->route('admin.sampah.index');
-}
-
+        Alert::success('Sukses!', 'Sampah berhasil dihapus!')->autoclose(3000);
+        return redirect()->route('admin.sampah.index');
+    }
 }

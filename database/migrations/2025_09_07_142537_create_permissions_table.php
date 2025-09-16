@@ -13,7 +13,8 @@ return new class extends Migration
             $table->unsignedBigInteger('admin_id'); // siapa yang mengajukan
             $table->string('action'); // misal: delete, update
             $table->string('table_name'); // tabel yg dimodifikasi
-            $table->unsignedBigInteger('record_id'); // id data terkait
+            $table->unsignedBigInteger('record_id')->nullable()->change();
+ // id data terkait
             $table->unsignedInteger('row_number')->nullable(); // <-- nomor urut di tabel admin
 
             $table->json('payload')->nullable(); // simpan data baru untuk update
