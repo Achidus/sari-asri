@@ -39,7 +39,7 @@ class PermissionController extends Controller
             $table     = $permission->table_name;
             $action    = $permission->action;
 
-            // Cari model
+            // Cari model sesuai tabel
             switch ($table) {
                 case 'transaksi_setoran':
                     $model = \App\Models\Transaksi::with('detailTransaksi.sampah')
@@ -65,7 +65,24 @@ class PermissionController extends Controller
             }
 
             // Jalankan aksi
-            if ($action === 'delete') {
+            if ($action === 'create') {
+                $payload = is_string($permission->payload)
+                    ? json_decode($permission->payload, true)
+                    : $permission->payload;
+
+                $payload = $payload ?? [];
+
+                if (!$model) {
+                    // create record baru
+                    $modelClass = "\\App\\Models\\" . Str::studly($table);
+                    if (!class_exists($modelClass)) {
+                        throw new \Exception("Model {$table} tidak ditemukan.");
+                    }
+                    $modelClass::create($payload);
+                }
+                $performed = true;
+
+            } elseif ($action === 'delete') {
                 if ($model) $model->delete();
                 $performed = true;
 
@@ -80,7 +97,7 @@ class PermissionController extends Controller
                 $payload = $payload ?? [];
 
                 if ($table === 'transaksi_setoran') {
-                    // Update transaksi & detail
+                    // update transaksi + detail
                     $model->update([
                         'nasabah_id'        => $payload['nasabah_id'] ?? $model->nasabah_id,
                         'tanggal_transaksi' => $payload['tanggal_transaksi'] ?? $model->tanggal_transaksi,
@@ -117,15 +134,14 @@ class PermissionController extends Controller
                     $newStatus = $payload['status'] ?? $oldStatus;
                     $newJumlah = $payload['jumlah_pencairan'] ?? $oldJumlah;
 
-                    // rollback dulu kalau status lama sudah disetujui
+                    // rollback dulu kalau sebelumnya sudah disetujui
                     if ($oldStatus === 'disetujui') {
                         $nasabah->saldo->saldo += $oldJumlah;
                     }
 
-                    // jika status baru disetujui, potong saldo sesuai jumlah baru
                     if ($newStatus === 'disetujui') {
                         if ($nasabah->saldo->saldo < $newJumlah) {
-                            throw new \Exception('Saldo nasabah tidak mencukupi untuk pencairan baru.');
+                            throw new \Exception('Saldo nasabah tidak mencukupi.');
                         }
                         $nasabah->saldo->saldo -= $newJumlah;
                     }
@@ -136,7 +152,6 @@ class PermissionController extends Controller
                         'status'           => $newStatus,
                         'jumlah_pencairan' => $newJumlah,
                     ]);
-
                 } else {
                     $model->update($payload ?? []);
                 }
@@ -148,7 +163,6 @@ class PermissionController extends Controller
                     throw new \Exception("Data pencairan saldo tidak ditemukan.");
                 }
 
-                // default → setujui
                 $nasabah = \App\Models\Nasabah::with('saldo')->findOrFail($model->nasabah_id);
 
                 if ($nasabah->saldo->saldo < $model->jumlah_pencairan) {
@@ -159,7 +173,6 @@ class PermissionController extends Controller
                 $nasabah->saldo->save();
 
                 $model->update(['status' => 'disetujui']);
-
                 $performed = true;
             }
 

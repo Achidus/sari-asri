@@ -48,7 +48,8 @@ Route::post('/feedback', [FeedbackController::class, 'store'])->name('feedback.s
 
 // Halaman utama
 Route::get('/', function (Request $request) {
-    $sampahs  = Sampah::paginate(10);
+   $sampahs  = Sampah::all();
+
 
     $nasabahs = Nasabah::with('saldo')
         ->when($request->search, function ($q) use ($request) {
@@ -64,7 +65,7 @@ Route::get('/', function (Request $request) {
     // ✅ Ambil banner aktif
     $banners = Banner::where('status', 'aktif')->get();
 
-    return view('welcome', compact('sampahs','nasabahs','artikels','banners'));
+    return view('index', compact('sampahs','nasabahs','artikels','banners'));
 })->name('welcome');
 
 // Halaman daftar artikel publik
