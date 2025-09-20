@@ -65,7 +65,7 @@ Route::get('/', function (Request $request) {
     // ✅ Ambil banner aktif
     $banners = Banner::where('status', 'aktif')->get();
 
-    return view('index', compact('sampahs','nasabahs','artikels','banners'));
+    return view('welcome', compact('sampahs','nasabahs','artikels','banners'));
 })->name('welcome');
 
 // Halaman daftar artikel publik
