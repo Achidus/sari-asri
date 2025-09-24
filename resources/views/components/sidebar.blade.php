@@ -1,3 +1,5 @@
+
+
 <!-- Sidebar -->
 <div id="sidebar" class="sidebar sidebar-style-2">
     <div class="sidebar-logo">
@@ -20,13 +22,7 @@
                 <button id="toggle-sidebar-btn" class="btn btn-toggle">
                     <i class="gg-menu-right"></i>
                 </button>
-                <button class="btn btn-toggle sidenav-toggler">
-                    <i class="gg-menu-left"></i>
-                </button>
             </div>
-            <button class="topbar-toggler more">
-                <i class="gg-more-vertical-alt"></i>
-            </button>
         </div>
         <!-- End Logo Header -->
     </div>
@@ -202,5 +198,97 @@
     </div>
 </div>
 <!-- End Sidebar -->
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Sidebar */
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px;
+    background: #2b2f38;
+    color: #fff;
+    overflow: hidden;
+    transition: width 0.3s, transform 0.3s ease;
+    z-index: 999;
+}
+
+#sidebar.collapsed {
+    width: 60px; /* laptop mode: sidebar mengecil */
+}
+
+/* Main content geser saat sidebar collapse */
+#main-content {
+    margin-left: 250px;
+    transition: margin-left 0.3s ease;
+}
+#sidebar.collapsed + #main-content {
+    margin-left: 60px;
+}
+
+/* Toggle Button */
+#toggle-sidebar-btn {
+    position: fixed;
+    top: 10px;
+    left: 250px; /* posisi awal di samping sidebar */
+    width: 35px;
+    height: 35px;
+    background: #2b2f38;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 1000;
+    transition: left 0.3s;
+}
+
+/* Geser toggle button saat sidebar collapse (laptop) */
+#sidebar.collapsed ~ #toggle-sidebar-btn {
+    left: 60px;
+}
+
+/* Responsif (HP) */
+@media (max-width: 768px) {
+    #sidebar {
+        transform: translateX(-260px);
+        width: 250px;
+    }
+    #sidebar.active {
+        transform: translateX(0);
+    }
+    #main-content {
+        margin-left: 0;
+    }
+
+    /* Toggle button di HP */
+    #toggle-sidebar-btn {
+        left: 10px; /* selalu di pojok kiri layar */
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('toggle-sidebar-btn');
+
+    toggleBtn.addEventListener('click', function() {
+        if(window.innerWidth <= 768){
+            // Mobile: geser keluar/masuk
+            sidebar.classList.toggle('active');
+        } else {
+            // Laptop: kecil/besar
+            sidebar.classList.toggle('collapsed');
+        }
+    });
+});
+</script>
+
+
 
 <!-- JS agar toggle aktif -->
