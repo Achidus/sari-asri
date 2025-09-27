@@ -163,7 +163,7 @@ Route::middleware(['auth', 'checkRole:petugas'])->prefix('petugas')->group(funct
     Route::post('/toggle-permission', [PermissionController::class, 'toggle'])->name('petugas.toggle-permission');
 
 });
-Route::get('/banner', [\App\Http\Controllers\FrontendBannerController::class, 'index'])->name('frontend.banner');
+Route::get('/banner', [\App\Http\Controllers\BannerController::class, 'index'])->name('frontend.banner');
 
 // Logout
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
