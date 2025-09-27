@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Banner;
 use Illuminate\Http\Request;
 
-class FrontendBannerController extends Controller
+class BannerController extends Controller
 {
     public function index()
     {

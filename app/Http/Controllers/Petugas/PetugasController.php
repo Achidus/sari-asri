@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\petugas;
+namespace App\Http\Controllers\Petugas;
 use Illuminate\Support\Facades\Hash;
 
 use App\Http\Controllers\Controller;
