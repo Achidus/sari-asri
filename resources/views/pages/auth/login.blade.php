@@ -38,6 +38,12 @@
                 <div class="form-action mb-3">
                     <button type="submit" class="btn btn-primary w-100">Masuk</button>
                 </div>
+                <div class="form-action mb-3">
+    <a href="{{ url('/') }}" class="btn btn-secondary w-100">
+        <i class="fas fa-arrow-left"></i> Kembali
+    </a>
+</div>
+
                 <center>
   <br>
   <p>Repost by <a href="https://siblih.rf.gd" target="_blank" rel="noopener noreferrer">SIBLIH</a></p>
