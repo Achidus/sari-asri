@@ -8,4 +8,17 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    build: {
+        rollupOptions: {
+            output: {
+                // Pisahkan CSS biar nggak inline ke JS
+                assetFileNames: (assetInfo) => {
+                    if (assetInfo.name && assetInfo.name.endsWith('.css')) {
+                        return 'assets/[name]-[hash][extname]';
+                    }
+                    return 'assets/[name]-[hash][extname]';
+                },
+            },
+        },
+    },
 });
